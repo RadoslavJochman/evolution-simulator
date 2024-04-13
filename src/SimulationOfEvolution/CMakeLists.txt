@@ -3,8 +3,8 @@
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
 include(AutoVcpkg)
 
-vcpkg_install(qtbase)
-vcpkg_install(matplotplusplus)
+#vcpkg_install(qtbase)
+#vcpkg_install(matplotplusplus)
 
 
 
@@ -25,40 +25,11 @@ if (MSVC)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
 endif (MSVC)
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets)
-find_package(Matplot++ REQUIRED)
+#find_package(Qt6 REQUIRED COMPONENTS Widgets)
+#find_package(Matplot++ REQUIRED)
+
+add_executable (${PROJECT_NAME} "Main.cpp")
 
 
 
 
-qt_standard_project_setup()
-
-qt_add_executable(${PROJECT_NAME}
-    "Main.cpp"
-)
-
-target_link_libraries(${PROJECT_NAME} PUBLIC Qt::Widgets Matplot++::matplot)
-
-install(TARGETS ${PROJECT_NAME}
-    BUNDLE DESTINATION .
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-
-qt_generate_deploy_app_script(
-    TARGET ${PROJECT_NAME}
-    OUTPUT_SCRIPT deploy_script
-    NO_UNSUPPORTED_PLATFORM_ERROR
-)
-install(SCRIPT ${deploy_script})
-
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-            "${PROJECT_SOURCE_DIR}\\out\\build\\x64-debug\\vcpkg\\installed\\x64-windows\\debug\\Qt6\\plugins\\platforms"
-            "${PROJECT_SOURCE_DIR}\\out\\build\\x64-debug\\platforms")
-else()
-        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-            "${PROJECT_SOURCE_DIR}\\out\\build\\x64-release\\vcpkg\\installed\\x64-windows\\Qt6\\plugins\\platforms"
-            "${PROJECT_SOURCE_DIR}\\out\\build\\x64-release\\platforms")
-endif()
