@@ -1,6 +1,6 @@
 #pragma once
 #include "Creature.h"
-#include <bitset>
+#include "utilites.h"
 
 //enum class ActionNeuronTypes { MFR, Mrn, MRL, Mx, My, Kill };
 //enum class SensorNeuronTypes { Age, Rnd, BDy, BD, Lx, Ly, Osc };
@@ -29,11 +29,7 @@ void Creature::buildBrain()
 	
 	for (auto&& gene : genome)
 	{
-		std::stringstream ss;
-		unsigned tmp;
-		ss << gene;
-		ss >> tmp;
-		std::string binGenome = std::bitset<32>(tmp).to_string();
+		std::string binGenome = hexToBin<8>(gene);
 		switch (binGenome[0])
 		{
 		case 0:
