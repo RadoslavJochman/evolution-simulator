@@ -4,7 +4,7 @@
 #include <bitset>
 
 template<std::size_t hexSize>
-std::string hexTobin(std::string hexNumber)
+std::string hexToBin(const std::string& hexNumber)
 {
 	std::stringstream ss;
 	unsigned tmp;
