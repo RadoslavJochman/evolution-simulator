@@ -7,17 +7,18 @@
 #include <map>
 #include "Neurons.h"
 
-enum class ActionNeuronsType { MFR, Mrn, MRL, Mx, My, Kill, size};
-enum class SensorNeuronsType { Age, Rnd, BDy, BD, Lx, Ly, Osc, size};
+enum class ActionNeuronTypes { MFR, Mrn, MRL, Mx, My, Kill, size};
+enum class SensorNeuronTypes { Age, Rnd, BDy, BD, Lx, Ly, Osc, size};
 
 class Creature
 {
 	std::vector<std::string> genome;
-	std::map<SensorNeuronsType, SensorNeuron> sensorBrain;
+	std::map<SensorNeuronTypes, std::unique_ptr<SensorNeuron>> sensorBrain;
 	std::map<int, InternalNeuron> internalBrain;
-	std::map<ActionNeuronsType, std::unique_ptr<ActionNeuron>> actionBrain;
+	std::map<ActionNeuronTypes, std::unique_ptr<ActionNeuron>> actionBrain;
 private:
 	void createGenome(std::size_t numOfGenes);
 	void buildBrain();
-	void addSensorNeuron(SensorNeuronsType type);
+	void addSensorNeuron(SensorNeuronTypes type);
+	void addActionNeuron(ActionNeuronTypes type);
 };
