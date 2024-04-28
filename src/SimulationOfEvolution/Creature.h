@@ -8,7 +8,7 @@
 #include "Neurons.h"
 
 enum class ActionNeuronTypes { MFR, Mrn, MRL, Mx, My, Kill, size};
-enum class SensorNeuronTypes { Age, Rnd, BDy, BD, Lx, Ly, Osc, size};
+enum class SensorNeuronTypes { Age, Rnd, BDy, BDx, BD, Lx, Ly, Osc, size};
 
 class Creature
 {

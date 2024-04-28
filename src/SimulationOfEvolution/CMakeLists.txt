@@ -10,6 +10,7 @@ include(AutoVcpkg)
 
 project(SimulationOfEvolution CXX)
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (MSVC)
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -28,7 +29,7 @@ endif (MSVC)
 #find_package(Qt6 REQUIRED COMPONENTS Widgets)
 #find_package(Matplot++ REQUIRED)
 
-add_executable (${PROJECT_NAME} "Main.cpp"  "utilites.h")
+add_executable (${PROJECT_NAME} "Main.cpp"  "utilites.h" "Neurons.h" "Neurons.cpp" "Creature.h" "Creature.cpp")
 
 
 

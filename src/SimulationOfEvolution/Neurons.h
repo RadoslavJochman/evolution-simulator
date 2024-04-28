@@ -1,31 +1,28 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "Environment.h"
+#include <ranges>
 #include <iostream>
-
-
-
 
 class SensorNeuron
 {
 protected:
-	Environment* my_env;
 public:
 	virtual float getActivation() = 0;
 };
 
 class InternalNeuron
 {
-	std::vector<InternalNeuron*> interInputs;
-	std::vector<SensorNeuron*> inputs;
-	float bias;
-
 public:
+
+	std::vector<InternalNeuron*> interInputs;
+	std::vector<SensorNeuron*> sensorInputs;
+	std::vector<int> sensorWeights;
+	std::vector<int> interWeights;
+
 	InternalNeuron();
 	float getActivation();
 };
-
 
 class AgeNeuron: SensorNeuron
 {
@@ -37,9 +34,78 @@ public:
 	float getActivation() override;
 };
 
+class RndNeuron : SensorNeuron
+{
+
+};
+
+class BDyNeuron : SensorNeuron
+{
+
+};
+
+class BDxNeuron : SensorNeuron
+{
+
+};
+
+class BDNeuron :SensorNeuron
+{
+
+};
+
+class LxNeuron : SensorNeuron
+{
+
+};
+
+class LyNeuron : SensorNeuron
+{
+
+};
+
+class OscNeuron : SensorNeuron
+{
+
+};
+
 class ActionNeuron
 {
+public:
+	std::vector<InternalNeuron*> interInputs;
+	std::vector<SensorNeuron*> sensorInputs;
+	std::vector<int> sensorWeights;
+	std::vector<int> interWeights;
 	ActionNeuron();
 	double activationTreshold;
-	Environment* my_env;
+};
+
+class MFRNeuron : ActionNeuron
+{
+
+};
+
+class MrnNeuron : ActionNeuron
+{
+
+};
+
+class MRLNeuron : ActionNeuron
+{
+
+};
+
+class MxNeuron : ActionNeuron
+{
+
+};
+
+class MyNeuron : ActionNeuron
+{
+
+};
+
+class KillNeuron : ActionNeuron
+{
+
 };

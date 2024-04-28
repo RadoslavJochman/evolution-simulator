@@ -2,14 +2,14 @@
 
 float InternalNeuron::getActivation()
 {
-	float activation = bias;
-	for (auto&& i : inputs)
+	float activation;
+	for (auto&& [i,j] : std::ranges::zip_view(sensorInputs, sensorWeights))
 	{
-		activation = activation + i->getActivation();
+		activation += i->getActivation() * j;
 	}
-	for (auto&& i : interInputs)
+	for (auto&& [i,j] : std::ranges::zip_view(interInputs, interWeights))
 	{
-		activation = activation + i->getActivation();
+		activation += i->getActivation() * j;
 	}
 	return activation;
 }
@@ -25,7 +25,7 @@ AgeNeuron::AgeNeuron()
 
 float AgeNeuron::getActivation()
 {
-	return my_env->currentStepInGen / my_env->maxGeneration;
+
 }
 
 ActionNeuron::ActionNeuron()

@@ -11,7 +11,7 @@ void Creature::createGenome(std::size_t numOfGenes)
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> dis(0, 15);
 
-	for (auto&& i : std::ranges::iota_view( 0,numOfGenes ))
+	for (auto&& i : std::ranges::iota_view<std::size_t,std::size_t>( 0,numOfGenes ))
 	{
 		std::stringstream gene;
 		for (auto&& j : std::ranges::iota_view( 0,8 ))
@@ -77,32 +77,35 @@ void Creature::createConnection(char sourceType, char endType, int sourceID, int
 {
 	if (sourceType == '0')
 	{
-		SensorNeuron* source = sensorBrain.find(sourceID)->second.get();
+		SensorNeuronTypes neuronType = static_cast<SensorNeuronTypes>(sourceID);
+		SensorNeuron* source = sensorBrain.find(neuronType)->second.get();
 		if (endType == '0')
 		{
-			ActionNeuron* end = actionBrain.find(endID)->second.get();
+			ActionNeuronTypes neuronType = static_cast<ActionNeuronTypes>(sourceID);
+			ActionNeuron* end = actionBrain.find(neuronType)->second.get();
 			end->sensorWeights.push_back(weight);
 			end->sensorInputs.push_back(source);
 		}
 		else
 		{
-			InternalNeuron* end = internalBrain.find(endID)->second.get();
+			InternalNeuron* end = &(internalBrain.find(endID)->second);
 			end->sensorWeights.push_back(weight);
 			end->sensorInputs.push_back(source);
 		}
 	}
 	else
 	{
-		InternalNeuron* source = internalBrain.find(sourceID)->second.get();
+		InternalNeuron* source = &(internalBrain.find(sourceID)->second);
 		if (endType == '0')
 		{
-			ActionNeuron* end = actionBrain.find(endID)->second.get();
+			ActionNeuronTypes neuronType = static_cast<ActionNeuronTypes>(sourceID);
+			ActionNeuron* end = actionBrain.find(neuronType)->second.get();
 			end->interWeights.push_back(weight);
 			end->interInputs.push_back(source);
 		}
 		else
 		{
-			InternalNeuron* end = internalBrain.find(endID)->second.get();
+			InternalNeuron* end = &(internalBrain.find(endID)->second);
 			end->interWeights.push_back(weight);
 			end->interInputs.push_back(source);
 		}
@@ -127,6 +130,10 @@ void Creature::addSensorNeuron(SensorNeuronTypes type)
 	{
 		sensorBrain.emplace(std::make_pair(type, std::make_unique<BDyNeuron>()));
 		break;
+	}
+	case SensorNeuronTypes::BDx:
+	{
+		sensorBrain.emplace(std::make_pair(type, std::make_unique<BDxNeuron>()));
 	}
 	case SensorNeuronTypes::BD:
 	{
