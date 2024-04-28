@@ -21,7 +21,6 @@ void Creature::createGenome(std::size_t numOfGenes)
 		}
 		genome.push_back(gene.str());
 	}
-
 }
 
 void Creature::buildBrain()
@@ -34,6 +33,7 @@ void Creature::buildBrain()
 		char endType = binGenome[8];
 		int sourceID;
 		int endID;
+		int weight = std::stoi(binGenome.substr(16, 32), nullptr, 2);
 		if (sourceType == '0')
 		{
 			sourceID = std::stoi(binGenome.substr(1, 8), nullptr, 2) % ((int)SensorNeuronTypes::size) + 1;
@@ -68,9 +68,46 @@ void Creature::buildBrain()
 				internalBrain.emplace(std::make_pair(internalBrain.size(), std::make_unique<InternalNeuron>()));
 			}
 		}
+
+		createConnection(sourceType, endType, sourceID, endID, weight);
 	}
 }
 
+void Creature::createConnection(char sourceType, char endType, int sourceID, int endID, int weight)
+{
+	if (sourceType == '0')
+	{
+		SensorNeuron* source = sensorBrain.find(sourceID)->second.get();
+		if (endType == '0')
+		{
+			ActionNeuron* end = actionBrain.find(endID)->second.get();
+			end->sensorWeights.push_back(weight);
+			end->sensorInputs.push_back(source);
+		}
+		else
+		{
+			InternalNeuron* end = internalBrain.find(endID)->second.get();
+			end->sensorWeights.push_back(weight);
+			end->sensorInputs.push_back(source);
+		}
+	}
+	else
+	{
+		InternalNeuron* source = internalBrain.find(sourceID)->second.get();
+		if (endType == '0')
+		{
+			ActionNeuron* end = actionBrain.find(endID)->second.get();
+			end->interWeights.push_back(weight);
+			end->interInputs.push_back(source);
+		}
+		else
+		{
+			InternalNeuron* end = internalBrain.find(endID)->second.get();
+			end->interWeights.push_back(weight);
+			end->interInputs.push_back(source);
+		}
+	}
+}
 
 void Creature::addSensorNeuron(SensorNeuronTypes type)
 {
@@ -158,3 +195,5 @@ void Creature::addActionNeuron(ActionNeuronTypes type)
 	}
 	}
 }
+
+

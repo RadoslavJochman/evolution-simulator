@@ -23,4 +23,5 @@ private:
 	void buildBrain();
 	void addSensorNeuron(SensorNeuronTypes type);
 	void addActionNeuron(ActionNeuronTypes type);
+	void createConnection(char sourceType, char endType, int sourceID, int endID, int weight);
 };
