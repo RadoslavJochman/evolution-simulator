@@ -2,12 +2,12 @@
 
 float InternalNeuron::getActivation()
 {
-	float activation;
-	for (auto&& [i,j] : std::ranges::zip_view(sensorInputs, sensorWeights))
+	float activation = 0;
+	for (auto&& [i,j] : std::ranges::zip_view(sensorInputs_, sensorWeights_))
 	{
 		activation += i->getActivation() * j;
 	}
-	for (auto&& [i,j] : std::ranges::zip_view(interInputs, interWeights))
+	for (auto&& [i,j] : std::ranges::zip_view(interInputs_, interWeights_))
 	{
 		activation += i->getActivation() * j;
 	}

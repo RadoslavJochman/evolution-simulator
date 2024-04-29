@@ -15,20 +15,28 @@ class InternalNeuron
 {
 public:
 
-	std::vector<InternalNeuron*> interInputs;
-	std::vector<SensorNeuron*> sensorInputs;
-	std::vector<int> sensorWeights;
-	std::vector<int> interWeights;
+	std::vector<InternalNeuron*> interInputs_;
+	std::vector<SensorNeuron*> sensorInputs_;
+	std::vector<int> sensorWeights_;
+	std::vector<int> interWeights_;
 
 	InternalNeuron();
 	float getActivation();
 };
 
+class ActionNeuron
+{
+public:
+	std::vector<InternalNeuron*> interInputs_;
+	std::vector<SensorNeuron*> sensorInputs_;
+	std::vector<int> sensorWeights_;
+	std::vector<int> interWeights_;
+	ActionNeuron();
+	double activationTreshold_;
+};
+
 class AgeNeuron: SensorNeuron
 {
-	std::vector<double> connectionWeights;
-	double maxOutput;
-	double minOutput;
 public:
 	AgeNeuron();
 	float getActivation() override;
@@ -67,17 +75,6 @@ class LyNeuron : SensorNeuron
 class OscNeuron : SensorNeuron
 {
 
-};
-
-class ActionNeuron
-{
-public:
-	std::vector<InternalNeuron*> interInputs;
-	std::vector<SensorNeuron*> sensorInputs;
-	std::vector<int> sensorWeights;
-	std::vector<int> interWeights;
-	ActionNeuron();
-	double activationTreshold;
 };
 
 class MFRNeuron : ActionNeuron
