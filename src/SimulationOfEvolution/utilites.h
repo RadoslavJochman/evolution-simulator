@@ -90,7 +90,7 @@ SensorNeuronTypes getSensorNeuron(const std::string& name)
 {
     static const std::unordered_map<std::string, SensorNeuronTypes> sensorNeuronMap = {
     {"Age", SensorNeuronTypes::Age},
-    {"Age", SensorNeuronTypes::Age},
+    {"Rnd", SensorNeuronTypes::Rnd},
     {"BDy", SensorNeuronTypes::BDy},
     {"BD", SensorNeuronTypes::BD},
     {"Lx", SensorNeuronTypes::Lx},
