@@ -19,22 +19,25 @@ std::string hexToBin(const std::string& hexNumber)
 
 struct Config
 {
-	Config(std::size_t envSize, std::string envType, std::size_t numCreatures, std::size_t maxInternalNeurons, std::vector<std::size_t> activeSensorNeurons, std::vector<std::size_t> activeActionNeurons)
+	Config(std::size_t envSize, std::string envType, std::size_t numCreatures, std::size_t maxInternalNeurons, std::vector<SensorNeuronTypes> activeSensorNeurons, std::vector<ActionNeuronTypes> activeActionNeurons, std::size_t numGenes)
 		:
 		envSize_(envSize),
 		envType_(envType),
 		numCreatures_(numCreatures),
 		maxInternalNeurons_(maxInternalNeurons),
 		activeSensorNeurons_(activeSensorNeurons),
-		activeActionNeurons_(activeActionNeurons)
+		activeActionNeurons_(activeActionNeurons),
+        numGenes_(numGenes)
+
 	{}
 
 	std::size_t envSize_;
 	std::string envType_;
 	std::size_t numCreatures_;
 	std::size_t maxInternalNeurons_;
-	std::vector<std::size_t> activeSensorNeurons_;
-	std::vector<std::size_t> activeActionNeurons_;
+	std::vector<SensorNeuronTypes> activeSensorNeurons_;
+	std::vector<ActionNeuronTypes> activeActionNeurons_;
+    std::size_t numGenes_;
 };
 
 enum ConfigKey {
@@ -44,6 +47,7 @@ enum ConfigKey {
     MAX_INTERNAL_NEURONS,
     SENSOR_NEURONS_TYPE,
     ACTION_NEURONS_TYPE,
+    NUM_GENES,
     UNKNOWN
 };
 
@@ -54,7 +58,8 @@ ConfigKey getConfigKey(const std::string& key) {
         {"num_creatures", NUM_CREATURES},
         {"max_internal_neurons", MAX_INTERNAL_NEURONS},
         {"sensor_neurons_type", SENSOR_NEURONS_TYPE},
-        {"action_neurons_type", ACTION_NEURONS_TYPE}
+        {"action_neurons_type", ACTION_NEURONS_TYPE},
+        {"number_of_genes", NUM_GENES}
     };
 
     auto it = keyMap.find(key);
@@ -117,8 +122,9 @@ Config readConfig(const std::string& filename) {
     std::string envType;
     std::size_t numCreatures = 0;
     std::size_t maxInternalNeurons = 0;
-    std::vector<std::size_t> sensorNeuronsType;
-    std::vector<std::size_t> actionNeuronsType;
+    std::size_t numGenes = 0;
+    std::vector<SensorNeuronTypes> sensorNeuronsType;
+    std::vector<ActionNeuronTypes> actionNeuronsType;
 
     std::string line;
     while (std::getline(file, line)) {
@@ -140,12 +146,14 @@ Config readConfig(const std::string& filename) {
                 case MAX_INTERNAL_NEURONS:
                     maxInternalNeurons = std::stoul(value);
                     break;
+                case NUM_GENES:
+                    numGenes = std::stoul(value);
                 case SENSOR_NEURONS_TYPE: {
                     std::istringstream ss(value);
                     std::string neuron;
                     while (ss >> neuron) {
                         ActionNeuronTypes type = getActionNeuron(neuron);
-                        if (type != ActionNeuronTypes::UNKNOWN)  actionNeuronsType.push_back((int)type);
+                        if (type != ActionNeuronTypes::UNKNOWN)  actionNeuronsType.push_back(type);
                         else {}// Handle unknown neuron if necessary
                     }
                     break;
@@ -155,7 +163,7 @@ Config readConfig(const std::string& filename) {
                     std::string neuron;
                     while (ss >> neuron) {
                         SensorNeuronTypes type = getSensorNeuron(neuron);
-                        if (type != SensorNeuronTypes::UNKNOWN)  actionNeuronsType.push_back((int)type);
+                        if (type != SensorNeuronTypes::UNKNOWN)  sensorNeuronsType.push_back(type);
                         else {}// Handle unknown neuron if necessary
                     }
                     break;
@@ -168,5 +176,5 @@ Config readConfig(const std::string& filename) {
         }
     }
 
-    return Config(envSize, envType, numCreatures, maxInternalNeurons, sensorNeuronsType, actionNeuronsType);
+    return Config(envSize, envType, numCreatures, maxInternalNeurons, sensorNeuronsType, actionNeuronsType, numGenes);
 }

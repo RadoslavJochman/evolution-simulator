@@ -5,21 +5,23 @@
 //enum class ActionNeuronTypes { MFR, Mrn, MRL, Mx, My, Kill };
 //enum class SensorNeuronTypes { Age, Rnd, BDy, BD, Lx, Ly, Osc };
 
-Creature::Creature(std::size_t numGenes, std::pair<std::size_t, std::size_t> pos)
+Creature::Creature(std::pair<std::size_t, std::size_t>&& pos, const Config& config)
 	:
+	config_(config),
 	pos_(pos)
+
 {
-	createGenome(numGenes);
+	createGenome();
 	buildBrain();
 }
 
-void Creature::createGenome(std::size_t numOfGenes)
+void Creature::createGenome()
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> dis(0, 15);
 
-	for (auto&& i : std::ranges::iota_view<std::size_t,std::size_t>( 0,numOfGenes ))
+	for (auto&& i : std::ranges::iota_view<std::size_t,std::size_t>( 0, config_.numGenes_))
 	{
 		std::stringstream gene;
 		for (auto&& j : std::ranges::iota_view( 0,8 ))
@@ -44,8 +46,8 @@ void Creature::buildBrain()
 		int weight = std::stoi(binGenome.substr(16, 32), nullptr, 2);
 		if (sourceType == '0')
 		{
-			sourceID = std::stoi(binGenome.substr(1, 8), nullptr, 2) % ((int)SensorNeuronTypes::size) + 1;
-			SensorNeuronTypes neuronType = static_cast<SensorNeuronTypes>(sourceID);
+			sourceID = std::stoi(binGenome.substr(1, 8), nullptr, 2) % config_.activeSensorNeurons_.size();
+			SensorNeuronTypes neuronType = config_.activeSensorNeurons_[sourceID];
 			if (sensorBrain_.find(neuronType) == sensorBrain_.end())
 			{
 				addSensorNeuron(neuronType);
@@ -53,16 +55,16 @@ void Creature::buildBrain()
 		}
 		else
 		{
-			sourceID = std::stoi(binGenome.substr(1, 8), nullptr, 2) % (maxNumInternal_);
+			sourceID = std::stoi(binGenome.substr(1, 8), nullptr, 2) % (config_.maxInternalNeurons_);
 			if (internalBrain_.find(sourceID)==internalBrain_.end())
 			{
-				internalBrain_.emplace(std::make_pair(internalBrain_.size(), std::make_unique<InternalNeuron>()));
+				internalBrain_.emplace(std::make_pair(internalBrain_.size(), InternalNeuron()));
 			}
 		}
 		if (endType == '0')
 		{
-			endID = std::stoi(binGenome.substr(9, 16), nullptr, 2) % ((int)ActionNeuronTypes::size) + 1;
-			ActionNeuronTypes neuronType = static_cast<ActionNeuronTypes>(sourceID);
+			endID = std::stoi(binGenome.substr(9, 16), nullptr, 2) % config_.activeActionNeurons_.size();
+			ActionNeuronTypes neuronType = config_.activeActionNeurons_[sourceID];
 			if (actionBrain_.find(neuronType) == actionBrain_.end())
 			{
 				addActionNeuron(neuronType);
@@ -70,10 +72,10 @@ void Creature::buildBrain()
 		}
 		else
 		{
-			sourceID = std::stoi(binGenome.substr(1, 8), nullptr, 2) % (maxNumInternal_);
+			sourceID = std::stoi(binGenome.substr(1, 8), nullptr, 2) % config_.maxInternalNeurons_;
 			if (internalBrain_.find(sourceID) == internalBrain_.end())
 			{
-				internalBrain_.emplace(std::make_pair(internalBrain_.size(), std::make_unique<InternalNeuron>()));
+				internalBrain_.emplace(std::make_pair(internalBrain_.size(), InternalNeuron()));
 			}
 		}
 
@@ -85,11 +87,11 @@ void Creature::createConnection(char sourceType, char endType, int sourceID, int
 {
 	if (sourceType == '0')
 	{
-		SensorNeuronTypes neuronType = static_cast<SensorNeuronTypes>(sourceID);
+		SensorNeuronTypes neuronType = config_.activeSensorNeurons_[sourceID];
 		SensorNeuron* source = sensorBrain_.find(neuronType)->second.get();
 		if (endType == '0')
 		{
-			ActionNeuronTypes neuronType = static_cast<ActionNeuronTypes>(sourceID);
+			ActionNeuronTypes neuronType = config_.activeActionNeurons_[sourceID];
 			ActionNeuron* end = actionBrain_.find(neuronType)->second.get();
 			end->sensorWeights_.push_back(weight);
 			end->sensorInputs_.push_back(source);
@@ -106,7 +108,7 @@ void Creature::createConnection(char sourceType, char endType, int sourceID, int
 		InternalNeuron* source = &(internalBrain_.find(sourceID)->second);
 		if (endType == '0')
 		{
-			ActionNeuronTypes neuronType = static_cast<ActionNeuronTypes>(sourceID);
+			ActionNeuronTypes neuronType = config_.activeActionNeurons_[sourceID];
 			ActionNeuron* end = actionBrain_.find(neuronType)->second.get();
 			end->interWeights_.push_back(weight);
 			end->interInputs_.push_back(source);

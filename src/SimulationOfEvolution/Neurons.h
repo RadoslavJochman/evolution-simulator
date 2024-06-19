@@ -4,9 +4,13 @@
 #include <ranges>
 #include <iostream>
 
+enum class ActionNeuronTypes { MFR, Mrn, MRL, Mx, My, Kill, UNKNOWN };
+enum class SensorNeuronTypes { Age, Rnd, BDy, BDx, BD, Lx, Ly, Osc, UNKNOWN };
+
 class SensorNeuron
 {
 protected:
+
 public:
 	virtual float getActivation() = 0;
 };
@@ -14,13 +18,10 @@ public:
 class InternalNeuron
 {
 public:
-
 	std::vector<InternalNeuron*> interInputs_;
 	std::vector<SensorNeuron*> sensorInputs_;
 	std::vector<int> sensorWeights_;
 	std::vector<int> interWeights_;
-
-	InternalNeuron();
 	float getActivation();
 };
 
@@ -31,78 +32,76 @@ public:
 	std::vector<SensorNeuron*> sensorInputs_;
 	std::vector<int> sensorWeights_;
 	std::vector<int> interWeights_;
-	ActionNeuron();
 	double activationTreshold_;
 };
 
-class AgeNeuron: SensorNeuron
+class AgeNeuron: public SensorNeuron
 {
 public:
-	AgeNeuron();
 	float getActivation() override;
 };
 
-class RndNeuron : SensorNeuron
+class RndNeuron : public SensorNeuron
+{
+	float getActivation() override;
+};
+
+class BDyNeuron : public SensorNeuron
+{
+	float getActivation() override;
+};
+
+class BDxNeuron : public SensorNeuron
+{
+	float getActivation() override;
+};
+
+class BDNeuron : public SensorNeuron
+{
+	float getActivation() override;
+};
+
+class LxNeuron : public SensorNeuron
+{
+	float getActivation() override;
+};
+
+class LyNeuron : public SensorNeuron
+{
+	float getActivation() override;
+};
+
+class OscNeuron : public SensorNeuron
+{
+	float getActivation() override;
+};
+
+class MFRNeuron : public ActionNeuron
 {
 
 };
 
-class BDyNeuron : SensorNeuron
+class MrnNeuron : public ActionNeuron
 {
 
 };
 
-class BDxNeuron : SensorNeuron
+class MRLNeuron : public ActionNeuron
 {
 
 };
 
-class BDNeuron :SensorNeuron
+class MxNeuron : public ActionNeuron
 {
 
 };
 
-class LxNeuron : SensorNeuron
+class MyNeuron : public ActionNeuron
 {
 
 };
 
-class LyNeuron : SensorNeuron
-{
-
-};
-
-class OscNeuron : SensorNeuron
-{
-
-};
-
-class MFRNeuron : ActionNeuron
-{
-
-};
-
-class MrnNeuron : ActionNeuron
-{
-
-};
-
-class MRLNeuron : ActionNeuron
-{
-
-};
-
-class MxNeuron : ActionNeuron
-{
-
-};
-
-class MyNeuron : ActionNeuron
-{
-
-};
-
-class KillNeuron : ActionNeuron
+class KillNeuron : public ActionNeuron
 {
 
 };
