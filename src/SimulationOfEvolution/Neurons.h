@@ -28,14 +28,22 @@ public:
 class ActionNeuron
 {
 public:
+	virtual void step() = 0;
+	ActionNeuron(Creature* owner, double activationTreshold)
+		:
+		owner_(owner),
+		activationTreshold_(activationTreshold) {}
+protected:
+	Creature* owner_;
 	std::vector<InternalNeuron*> interInputs_;
 	std::vector<SensorNeuron*> sensorInputs_;
 	std::vector<int> sensorWeights_;
 	std::vector<int> interWeights_;
 	double activationTreshold_;
+	double getActivation();
 };
 
-class AgeNeuron: public SensorNeuron
+class AgeNeuron : public SensorNeuron
 {
 public:
 	float getActivation() override;
@@ -78,30 +86,30 @@ class OscNeuron : public SensorNeuron
 
 class MFRNeuron : public ActionNeuron
 {
-
+	void step() override;
 };
 
 class MrnNeuron : public ActionNeuron
 {
-
+	void step() override;
 };
 
 class MRLNeuron : public ActionNeuron
 {
-
+	void step() override;
 };
 
 class MxNeuron : public ActionNeuron
 {
-
+	void step() override;
 };
 
 class MyNeuron : public ActionNeuron
 {
-
+	void step() override;
 };
 
 class KillNeuron : public ActionNeuron
 {
-
+	void step() override;
 };
