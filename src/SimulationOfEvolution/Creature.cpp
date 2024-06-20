@@ -1,18 +1,29 @@
-#pragma once
 #include "Creature.h"
 #include "utilites.h"
 #include <ranges>
-//enum class ActionNeuronTypes { MFR, Mrn, MRL, Mx, My, Kill };
-//enum class SensorNeuronTypes { Age, Rnd, BDy, BD, Lx, Ly, Osc };
 
 Creature::Creature(std::pair<std::size_t, std::size_t>&& pos, const Config& config)
 	:
 	config_(config),
-	pos_(pos)
+	pos_(pos),
+	direction_({ 1,0 })
 
 {
 	createGenome();
 	buildBrain();
+}
+
+void Creature::step()
+{
+	for (auto&& actionNeuron : actionBrain_)
+	{
+		actionNeuron.second->step();
+	}
+}
+
+void Creature::updatePosition()
+{
+	pos_ = pos_ + direction_;
 }
 
 void Creature::createGenome()
@@ -21,10 +32,10 @@ void Creature::createGenome()
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> dis(0, 15);
 
-	for (auto&& i : std::ranges::iota_view<std::size_t,std::size_t>( 0, config_.numGenes_))
+	for (auto&& i : std::ranges::iota_view<std::size_t, std::size_t>(0, config_.numGenes_))
 	{
 		std::stringstream gene;
-		for (auto&& j : std::ranges::iota_view( 0,8 ))
+		for (auto&& j : std::ranges::iota_view(0, 8))
 		{
 			int randNumb = dis(gen);
 			gene << std::hex << randNumb;
@@ -35,10 +46,10 @@ void Creature::createGenome()
 
 void Creature::buildBrain()
 {
-	
+
 	for (auto&& gene : genome_)
 	{
-		std::string binGenome = hexToBin<8>(gene);
+		std::string binGenome = hexToBin(gene);
 		char sourceType = binGenome[0];
 		char endType = binGenome[8];
 		int sourceID;
@@ -56,15 +67,15 @@ void Creature::buildBrain()
 		else
 		{
 			sourceID = std::stoi(binGenome.substr(1, 8), nullptr, 2) % (config_.maxInternalNeurons_);
-			if (internalBrain_.find(sourceID)==internalBrain_.end())
+			if (internalBrain_.find(sourceID) == internalBrain_.end())
 			{
-				internalBrain_.emplace(std::make_pair(internalBrain_.size(), InternalNeuron()));
+				internalBrain_.insert(std::make_pair(sourceID, InternalNeuron()));
 			}
 		}
 		if (endType == '0')
 		{
 			endID = std::stoi(binGenome.substr(9, 16), nullptr, 2) % config_.activeActionNeurons_.size();
-			ActionNeuronTypes neuronType = config_.activeActionNeurons_[sourceID];
+			ActionNeuronTypes neuronType = config_.activeActionNeurons_[endID];
 			if (actionBrain_.find(neuronType) == actionBrain_.end())
 			{
 				addActionNeuron(neuronType);
@@ -72,10 +83,10 @@ void Creature::buildBrain()
 		}
 		else
 		{
-			sourceID = std::stoi(binGenome.substr(1, 8), nullptr, 2) % config_.maxInternalNeurons_;
-			if (internalBrain_.find(sourceID) == internalBrain_.end())
+			endID = std::stoi(binGenome.substr(1, 8), nullptr, 2) % config_.maxInternalNeurons_;
+			if (internalBrain_.find(endID) == internalBrain_.end())
 			{
-				internalBrain_.emplace(std::make_pair(internalBrain_.size(), InternalNeuron()));
+				internalBrain_.insert(std::make_pair(endID, InternalNeuron()));
 			}
 		}
 
@@ -87,12 +98,13 @@ void Creature::createConnection(char sourceType, char endType, int sourceID, int
 {
 	if (sourceType == '0')
 	{
-		SensorNeuronTypes neuronType = config_.activeSensorNeurons_[sourceID];
-		SensorNeuron* source = sensorBrain_.find(neuronType)->second.get();
+		SensorNeuronTypes sourceNeuronType = config_.activeSensorNeurons_[sourceID];
+		SensorNeuron* source = sensorBrain_.find(sourceNeuronType)->second.get();
 		if (endType == '0')
 		{
-			ActionNeuronTypes neuronType = config_.activeActionNeurons_[sourceID];
-			ActionNeuron* end = actionBrain_.find(neuronType)->second.get();
+
+			ActionNeuronTypes endNeuronType = config_.activeActionNeurons_[endID];
+			ActionNeuron* end = actionBrain_.find(endNeuronType)->second.get();
 			end->sensorWeights_.push_back(weight);
 			end->sensorInputs_.push_back(source);
 		}
@@ -108,8 +120,8 @@ void Creature::createConnection(char sourceType, char endType, int sourceID, int
 		InternalNeuron* source = &(internalBrain_.find(sourceID)->second);
 		if (endType == '0')
 		{
-			ActionNeuronTypes neuronType = config_.activeActionNeurons_[sourceID];
-			ActionNeuron* end = actionBrain_.find(neuronType)->second.get();
+			ActionNeuronTypes endNeuronType = config_.activeActionNeurons_[endID];
+			ActionNeuron* end = actionBrain_.find(endNeuronType)->second.get();
 			end->interWeights_.push_back(weight);
 			end->interInputs_.push_back(source);
 		}
@@ -128,41 +140,41 @@ void Creature::addSensorNeuron(SensorNeuronTypes type)
 	{
 	case SensorNeuronTypes::Age:
 	{
-		sensorBrain_.emplace(std::make_pair(type, std::make_unique<AgeNeuron>()));
+		sensorBrain_.insert(std::make_pair(type, std::make_unique<AgeNeuron>()));
 		break;
 	}
 	case SensorNeuronTypes::Rnd:
 	{
-		sensorBrain_.emplace(std::make_pair(type, std::make_unique<RndNeuron>()));
+		sensorBrain_.insert(std::make_pair(type, std::make_unique<RndNeuron>()));
 		break;
 	}
 	case SensorNeuronTypes::BDy:
 	{
-		sensorBrain_.emplace(std::make_pair(type, std::make_unique<BDyNeuron>()));
+		sensorBrain_.insert(std::make_pair(type, std::make_unique<BDyNeuron>()));
 		break;
 	}
 	case SensorNeuronTypes::BDx:
 	{
-		sensorBrain_.emplace(std::make_pair(type, std::make_unique<BDxNeuron>()));
+		sensorBrain_.insert(std::make_pair(type, std::make_unique<BDxNeuron>()));
 	}
 	case SensorNeuronTypes::BD:
 	{
-		sensorBrain_.emplace(std::make_pair(type, std::make_unique<BDNeuron>()));
+		sensorBrain_.insert(std::make_pair(type, std::make_unique<BDNeuron>()));
 		break;
 	}
 	case SensorNeuronTypes::Lx:
 	{
-		sensorBrain_.emplace(std::make_pair(type, std::make_unique<LxNeuron>()));
+		sensorBrain_.insert(std::make_pair(type, std::make_unique<LxNeuron>()));
 		break;
 	}
 	case SensorNeuronTypes::Ly:
 	{
-		sensorBrain_.emplace(std::make_pair(type, std::make_unique<LyNeuron>()));
+		sensorBrain_.insert(std::make_pair(type, std::make_unique<LyNeuron>()));
 		break;
 	}
 	case SensorNeuronTypes::Osc:
 	{
-		sensorBrain_.emplace(std::make_pair(type, std::make_unique<OscNeuron>()));
+		sensorBrain_.insert(std::make_pair(type, std::make_unique<OscNeuron>()));
 		break;
 	}
 	default:
@@ -178,32 +190,32 @@ void Creature::addActionNeuron(ActionNeuronTypes type)
 	{
 	case ActionNeuronTypes::MFR:
 	{
-		actionBrain_.emplace(std::make_pair(type, std::make_unique<MFRNeuron>()));
+		actionBrain_.insert(std::make_pair(type, std::make_unique<MFRNeuron>()));
 		break;
 	}
 	case ActionNeuronTypes::Mrn:
 	{
-		actionBrain_.emplace(std::make_pair(type, std::make_unique<MrnNeuron>()));
+		actionBrain_.insert(std::make_pair(type, std::make_unique<MrnNeuron>()));
 		break;
 	}
 	case ActionNeuronTypes::MRL:
 	{
-		actionBrain_.emplace(std::make_pair(type, std::make_unique<MRLNeuron>()));
+		actionBrain_.insert(std::make_pair(type, std::make_unique<MRLNeuron>()));
 		break;
 	}
 	case ActionNeuronTypes::Mx:
 	{
-		actionBrain_.emplace(std::make_pair(type, std::make_unique<MxNeuron>()));
+		actionBrain_.insert(std::make_pair(type, std::make_unique<MxNeuron>()));
 		break;
 	}
 	case ActionNeuronTypes::My:
 	{
-		actionBrain_.emplace(std::make_pair(type, std::make_unique<MyNeuron>()));
+		actionBrain_.insert(std::make_pair(type, std::make_unique<MyNeuron>()));
 		break;
 	}
 	case ActionNeuronTypes::Kill:
 	{
-		actionBrain_.emplace(std::make_pair(type, std::make_unique<KillNeuron>()));
+		actionBrain_.insert(std::make_pair(type, std::make_unique<KillNeuron>()));
 		break;
 	}
 	default:
