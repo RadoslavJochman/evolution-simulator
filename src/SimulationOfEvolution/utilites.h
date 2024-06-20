@@ -7,6 +7,17 @@
 #include <unordered_map>
 #include "Neurons.h"
 
+template<typename T, typename U>
+concept Addable = requires(T a, U b) {
+    { a + b };
+};
+
+template<typename T1, typename T2, typename U1, typename U2>
+    requires Addable<T1, U1>&& Addable<T2, U2>
+auto operator+(const std::pair<T1, T2>& p1, const std::pair<U1, U2>& p2) -> std::pair<decltype(p1.first + p2.first), decltype(p1.second + p2.second)> {
+    return std::make_pair(p1.first + p2.first, p1.second + p2.second);
+}
+
 inline std::string hexToBin(const std::string& hex) {
     static const std::unordered_map<char, std::string> hexToBinMap = {
         {'0', "0000"}, {'1', "0001"}, {'2', "0010"}, {'3', "0011"},
