@@ -18,6 +18,8 @@ public:
 	Environment(const Config& config);
 	bool isFree(int x, int y);
 	void moveCreature(std::size_t x, std::size_t y, std::size_t new_x, std::size_t new_y);
+	const std::vector<Creature>& getCreatures() const;
+	void step();
 private:
 	const Config& config_;
 	std::size_t numCreatures_;

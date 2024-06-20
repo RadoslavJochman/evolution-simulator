@@ -29,49 +29,49 @@ void InternalNeuron::createConnection(double weight, SensorNeuron* source)
 //returns how many frames passed since start of current generation
 float AgeNeuron::getActivation()
 {
-	return 0.0f;
+	return 1.0f;
 }
 
 //returns random number
 float RndNeuron::getActivation()
 {
-	return 0.0f;
+	return 1.0f;
 }
 
 //returns distance from north/south border
 float BDyNeuron::getActivation()
 {
-	return 0.0f;
+	return 1.0f;
 }
 
 //returns distance from east/west border
 float BDxNeuron::getActivation()
 {
-	return 0.0f;
+	return 1.0f;
 }
 
 //returns neares border distance
 float BDNeuron::getActivation()
 {
-	return 0.0f;
+	return 1.0f;
 }
 
 //returns x location
 float LxNeuron::getActivation()
 {
-	return 0.0f;
+	return 1.0f;
 }
 
 //returns y location
 float LyNeuron::getActivation()
 {
-	return 0.0f;
+	return 1.0f;
 }
 
 //oscillate and returns the value of this oscillation
 float OscNeuron::getActivation()
 {
-	return 0.0f;
+	return 1.0f;
 }
 
 double ActionNeuron::getActivation()

@@ -3,8 +3,8 @@
 
 Environment::Environment(const Config& config)
 	:
-	numCreatures_(config.numCreatures_),
-	config_(config)
+	config_(config),
+	numCreatures_(config.numCreatures_)
 {
 	habitat_.resize(config.envSize_);
 	for (int i = 0; i < config.envSize_; ++i)
@@ -36,5 +36,18 @@ void Environment::moveCreature(std::size_t x, std::size_t y, std::size_t new_x, 
 {
 	habitat_[new_x][new_y] = habitat_[x][y];
 	habitat_[x][y] = nullptr;
+}
+
+const std::vector<Creature>& Environment::getCreatures() const
+{
+	return creatures_;
+}
+
+void Environment::step()
+{
+	for (auto&& creature : creatures_)
+	{
+		creature.step();
+	}
 }
 

@@ -29,6 +29,7 @@ public:
 	void moveRight(const std::pair<int, int>& direction);
 	void moveForward(const std::pair<int, int>& direction);
 	void updatePosition(const std::pair<int, int>& direction);
+	const std::pair<std::size_t, std::size_t>& getPosition() const;
 private:
 	Environment& myEnv_;
 	const Config& config_;

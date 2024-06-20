@@ -86,8 +86,8 @@ struct Config
         std::vector<SensorNeuronTypes> activeSensorNeurons = {},
         std::vector<ActionNeuronTypes> activeActionNeurons = {},
         std::size_t numGenes = 0,
-        std::size_t numGenerations,
-        std::size_t numSteps)
+        std::size_t numGenerations=0,
+        std::size_t numSteps=0)
         : 
         envSize_(envSize),
         envType_(std::move(envType)),
@@ -100,6 +100,19 @@ struct Config
         numSteps_(numSteps)
 
 	{}
+    Config()
+        :
+        envSize_(0),
+        envType_(""),
+        numCreatures_(0),
+        maxInternalNeurons_(0),
+        activeSensorNeurons_(),
+        activeActionNeurons_(),
+        numGenes_(0),
+        numGenerations_(0),
+        numSteps_(0)
+
+    {}
 
 	std::size_t envSize_;
 	std::string envType_;

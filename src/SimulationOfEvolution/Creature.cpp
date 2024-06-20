@@ -55,6 +55,11 @@ void Creature::updatePosition(const std::pair<int, int>& direction)
 	}
 }
 
+const std::pair<std::size_t, std::size_t>& Creature::getPosition() const
+{
+	return pos_;
+}
+
 void Creature::createGenome()
 {
 	std::random_device rd;
@@ -83,7 +88,7 @@ void Creature::buildBrain()
 		char endType = binGenome[8];
 		int sourceID;
 		int endID;
-		int weight = std::stoi(binGenome.substr(16, 32), nullptr, 2);
+		int weight = 1;//std::stoi(binGenome.substr(16, 32), nullptr, 2);
 		if (sourceType == '0')
 		{
 			sourceID = std::stoi(binGenome.substr(1, 8), nullptr, 2) % config_.activeSensorNeurons_.size();
@@ -125,7 +130,7 @@ void Creature::buildBrain()
 
 void Creature::createConnection(char sourceType, char endType, int sourceID, int endID, int weight)
 {
-	if (sourceType == '0')
+	if (sourceType == '0' || (sourceType==1 && endType==1))								//we dont allow connection between 2 internal neurons
 	{
 		SensorNeuronTypes sourceNeuronType = config_.activeSensorNeurons_[sourceID];
 		SensorNeuron* source = sensorBrain_.find(sourceNeuronType)->second.get();
