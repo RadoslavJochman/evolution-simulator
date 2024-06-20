@@ -85,7 +85,9 @@ struct Config
         std::size_t maxInternalNeurons,
         std::vector<SensorNeuronTypes> activeSensorNeurons = {},
         std::vector<ActionNeuronTypes> activeActionNeurons = {},
-        std::size_t numGenes = 0)
+        std::size_t numGenes = 0,
+        std::size_t numGenerations,
+        std::size_t numSteps)
         : 
         envSize_(envSize),
         envType_(std::move(envType)),
@@ -93,7 +95,9 @@ struct Config
         maxInternalNeurons_(maxInternalNeurons),
         activeSensorNeurons_(std::move(activeSensorNeurons)),
         activeActionNeurons_(std::move(activeActionNeurons)),
-        numGenes_(numGenes)
+        numGenes_(numGenes),
+        numGenerations_(numGenerations),
+        numSteps_(numSteps)
 
 	{}
 
@@ -104,6 +108,8 @@ struct Config
 	std::vector<SensorNeuronTypes> activeSensorNeurons_;
 	std::vector<ActionNeuronTypes> activeActionNeurons_;
     std::size_t numGenes_;
+    std::size_t numGenerations_;
+    std::size_t numSteps_;
 };
 
 enum ConfigKey {
@@ -114,6 +120,8 @@ enum ConfigKey {
     SENSOR_NEURONS_TYPE,
     ACTION_NEURONS_TYPE,
     NUM_GENES,
+    NUM_GENERATIONS,
+    NUM_STEPS,
     UNKNOWN
 };
 
@@ -125,7 +133,9 @@ inline ConfigKey getConfigKey(const std::string& key) {
         {"max_internal_neurons", MAX_INTERNAL_NEURONS},
         {"sensor_neurons_type", SENSOR_NEURONS_TYPE},
         {"action_neurons_type", ACTION_NEURONS_TYPE},
-        {"number_of_genes", NUM_GENES}
+        {"number_of_genes", NUM_GENES},
+        {"number_of_generations",NUM_GENERATIONS},
+        {"number_of_steps", NUM_STEPS}
     };
 
     auto it = keyMap.find(key);
@@ -191,6 +201,8 @@ inline Config readConfig(const std::string& filename) {
     std::size_t numGenes = 0;
     std::vector<SensorNeuronTypes> sensorNeuronsType;
     std::vector<ActionNeuronTypes> actionNeuronsType;
+    std::size_t numGenerations;
+    std::size_t numSteps;
 
     std::string line;
     while (std::getline(file, line)) {
@@ -214,6 +226,10 @@ inline Config readConfig(const std::string& filename) {
                     break;
                 case NUM_GENES:
                     numGenes = std::stoul(value);
+                case NUM_GENERATIONS:
+                    numGenerations = std::stoul(value);
+                case NUM_STEPS:
+                    numSteps = std::stoul(value);
                 case SENSOR_NEURONS_TYPE: {
                     std::istringstream ss(value);
                     std::string neuron;
@@ -242,6 +258,6 @@ inline Config readConfig(const std::string& filename) {
         }
     }
 
-    return Config(envSize, envType, numCreatures, maxInternalNeurons, sensorNeuronsType, actionNeuronsType, numGenes);
+    return Config(envSize, envType, numCreatures, maxInternalNeurons, sensorNeuronsType, actionNeuronsType, numGenes, numGenerations, numSteps);
 }
 #endif
