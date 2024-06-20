@@ -1,35 +1,36 @@
-﻿cmake_minimum_required(VERSION 3.16...3.22)
-
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
-include(AutoVcpkg)
-
-#vcpkg_install(qtbase)
-#vcpkg_install(matplotplusplus)
+﻿cmake_minimum_required(VERSION 3.22.0)
 
 
+include(cmake/vcpkg.cmake)
 
-project(SimulationOfEvolution CXX)
+project(SimulationOfEvolution VERSION 0.1.0 LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if (MSVC)
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR})
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
+if(CMAKE_HOST_WIN32)
+  set(OBJECT_PATH_MAX 260)
+  set(OBJECT_NAME_MAX 255)
+endif()
 
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR})
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
+qt_standard_project_setup()
 
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR})
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
-endif (MSVC)
+qt_add_executable(${PROJECT_NAME} "Main.cpp" "Neurons.h" "Neurons.cpp" "utilites.h" "Creature.h" "Creature.cpp" "Environment.h" "Environment.cpp" "QtGraphics.cpp" "QtGraphics.h") 
+target_link_libraries(${PROJECT_NAME} PUBLIC Qt6::Core Qt6::Gui Qt6::Widgets)
 
-#find_package(Qt6 REQUIRED COMPONENTS Widgets)
-#find_package(Matplot++ REQUIRED)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    file(GLOB PLUGIN_FILES "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/Debug/QT6/plugins/platforms/*")
+else(CMAKE_BUILD_TYPE STREQUAL "Release")
+    file(GLOB PLUGIN_FILES "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/QT6/plugins/platforms/*")
+endif()
+if(WIN32)
+    file( MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/platforms" )
+    foreach(CurrentPlatformFile IN LISTS PLUGIN_FILES)
+        execute_process(
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CurrentPlatformFile} "${CMAKE_CURRENT_BINARY_DIR}/platforms")
+    endforeach()
+endif()
 
-add_executable (${PROJECT_NAME} "Main.cpp"  "utilites.h" "Neurons.h" "Neurons.cpp" "Creature.h" "Creature.cpp")
 
 
 
