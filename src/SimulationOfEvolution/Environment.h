@@ -11,20 +11,21 @@ public:
 	Environment(const Config& config) :
 		numCreatures_(config.numCreatures_)
 	{
-		for (auto&& pos : habitat_)
+		habitat_.resize(config.envSize_);
+		for (int i = 0; i < config.envSize_; ++i)
 		{
-			std::fill(pos.begin(), pos.end(), nullptr);
+			habitat_[i].resize(config.envSize_, nullptr);
 		}
-		auto iotaRange = std::views::iota(0, config.envSize_**2);
-		std::vector<int> positions(iotaRange.begin(), iotaRange.end());
+		auto iotaRange = std::views::iota(0, static_cast<int>(pow(config.envSize_, 2)));
+		std::vector<int> positions(std::ranges::begin(iotaRange), std::ranges::end(iotaRange));
 		std::random_device rd;
 		std::mt19937 g(rd());
 		std::shuffle(positions.begin(), positions.end(), g);
-		for (int i : positions | std::views::take(numCreature))
+		for (int i : positions | std::views::take(config.numCreatures_))
 		{
 			auto pos = std::div(i, config.envSize_);
-			creatures_.push_back(Creature({pos.rem,pos.quot}, config));
-			habitat_[pos.rem][pos.quot] = creatures_.back();
+			creatures_.push_back(Creature({ pos.rem,pos.quot }, config));
+			habitat_[pos.rem][pos.quot] = &(creatures_.back());
 		}
 	}
 
