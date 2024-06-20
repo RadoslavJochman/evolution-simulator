@@ -1,8 +1,10 @@
-#pragma once
+#ifndef ENVIRONMENT_H
+#define ENVIRONMENT_H
 #include "Neurons.h"
 #include "Creature.h"
 #include "utilites.h"
-
+#include <ranges>
+#include <cmath>
 
 class Environment
 {
@@ -34,3 +36,4 @@ private:
 	std::vector<Creature> creatures_;
 	std::vector<std::vector<Creature*>> habitat_;
 };
+#endif

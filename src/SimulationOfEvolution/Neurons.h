@@ -1,8 +1,10 @@
-#pragma once
+#ifndef NEURONS_H
+#define NEURONS_H
 #include <vector>
 #include <memory>
 #include <ranges>
 #include <iostream>
+#include "Creature.h"
 
 enum class ActionNeuronTypes { MFR, Mrn, MRL, Mx, My, Kill, UNKNOWN };
 enum class SensorNeuronTypes { Age, Rnd, BDy, BDx, BD, Lx, Ly, Osc, UNKNOWN };
@@ -113,3 +115,4 @@ class KillNeuron : public ActionNeuron
 {
 	void step() override;
 };
+#endif

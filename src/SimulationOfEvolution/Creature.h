@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CREATURE_H
+#define CREATURE_H
 #include <string>
 #include <random>
 #include <ranges>
@@ -6,6 +7,7 @@
 #include <vector>
 #include <unordered_map>
 #include "Neurons.h"
+#include "utilites.h"
 
 
 class Creature
@@ -33,3 +35,4 @@ private:
 	void addActionNeuron(ActionNeuronTypes type);
 	void createConnection(char sourceType, char endType, int sourceID, int endID, int weight);
 };
+#endif

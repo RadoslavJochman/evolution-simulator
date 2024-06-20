@@ -1,4 +1,5 @@
-#pragma
+#ifndef UTILITIES_H
+#define UTILITIES_H
 #include <string>
 #include <sstream>
 #include <bitset>
@@ -203,3 +204,4 @@ Config readConfig(const std::string& filename) {
 
     return Config(envSize, envType, numCreatures, maxInternalNeurons, sensorNeuronsType, actionNeuronsType, numGenes);
 }
+#endif
