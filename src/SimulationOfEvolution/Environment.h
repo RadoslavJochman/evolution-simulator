@@ -6,6 +6,11 @@
 #include <ranges>
 #include <cmath>
 
+enum class ActionNeuronTypes;
+enum class SensorNeuronTypes;
+class SensorNeuron;
+class Creature;
+
 class Environment
 {
 

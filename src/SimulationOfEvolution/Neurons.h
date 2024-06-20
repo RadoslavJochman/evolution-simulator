@@ -6,13 +6,13 @@
 #include <iostream>
 #include "Creature.h"
 
-enum class ActionNeuronTypes { MFR, Mrn, MRL, Mx, My, Kill, UNKNOWN };
-enum class SensorNeuronTypes { Age, Rnd, BDy, BDx, BD, Lx, Ly, Osc, UNKNOWN };
+enum class ActionNeuronTypes;
+enum class SensorNeuronTypes; 
+class Creature;
+
 
 class SensorNeuron
 {
-protected:
-
 public:
 	virtual float getActivation() = 0;
 };
@@ -20,17 +20,22 @@ public:
 class InternalNeuron
 {
 public:
+	float getActivation();
+	void createConnection(double weight, InternalNeuron* source);
+	void createConnection(double weight, SensorNeuron* source);
+protected:
 	std::vector<InternalNeuron*> interInputs_;
 	std::vector<SensorNeuron*> sensorInputs_;
 	std::vector<int> sensorWeights_;
 	std::vector<int> interWeights_;
-	float getActivation();
 };
 
 class ActionNeuron
 {
 public:
 	virtual void step() = 0;
+	void createConnection(double weight, InternalNeuron* source);
+	void createConnection(double weight, SensorNeuron* source);
 	ActionNeuron(Creature* owner, double activationTreshold)
 		:
 		owner_(owner),
@@ -88,31 +93,49 @@ class OscNeuron : public SensorNeuron
 
 class MFRNeuron : public ActionNeuron
 {
+public:
+	MFRNeuron(Creature* owner, double activationTreshold)
+		: ActionNeuron(owner, activationTreshold) {}
 	void step() override;
 };
 
 class MrnNeuron : public ActionNeuron
 {
+public:
+	MrnNeuron(Creature* owner, double activationTreshold)
+		: ActionNeuron(owner, activationTreshold) {}
 	void step() override;
 };
 
 class MRLNeuron : public ActionNeuron
 {
+public:
+	MRLNeuron(Creature* owner, double activationTreshold)
+		: ActionNeuron(owner, activationTreshold) {}
 	void step() override;
 };
 
 class MxNeuron : public ActionNeuron
 {
+public:
+	MxNeuron(Creature* owner, double activationTreshold)
+		: ActionNeuron(owner, activationTreshold) {}
 	void step() override;
 };
 
 class MyNeuron : public ActionNeuron
 {
+public:
+	MyNeuron(Creature* owner, double activationTreshold)
+		: ActionNeuron(owner, activationTreshold) {}
 	void step() override;
 };
 
 class KillNeuron : public ActionNeuron
 {
+public:
+	KillNeuron(Creature* owner, double activationTreshold)
+		: ActionNeuron(owner, activationTreshold) {}
 	void step() override;
 };
 #endif

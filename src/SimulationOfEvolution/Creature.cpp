@@ -25,7 +25,7 @@ void Creature::step()
 void Creature::moveRight(const std::pair<int, int>& direction)
 {
 	direction_ = swapPairValues(direction_) * direction;
-	std::pair<std::size_t, std::size_t> new_pos = pos_ + direction_;
+	std::pair<int, int> new_pos = pos_ + direction_;
 	if (myEnv_.isFree(new_pos.first, new_pos.second))
 	{
 		myEnv_.moveCreature(pos_.first, pos_.second, new_pos.first, new_pos.second);
@@ -36,7 +36,7 @@ void Creature::moveRight(const std::pair<int, int>& direction)
 void Creature::moveForward(const std::pair<int, int>& direction)
 {
 	direction_ = direction_ * direction;
-	std::pair<std::size_t, std::size_t> new_pos = pos_ + direction_;
+	std::pair<int, int> new_pos = pos_ + direction_;
 	if (myEnv_.isFree(new_pos.first, new_pos.second))
 	{
 		myEnv_.moveCreature(pos_.first, pos_.second, new_pos.first, new_pos.second);
@@ -47,7 +47,7 @@ void Creature::moveForward(const std::pair<int, int>& direction)
 void Creature::updatePosition(const std::pair<int, int>& direction)
 {
 	
-	std::pair<std::size_t, std::size_t> new_pos = pos_ + direction;
+	std::pair<int, int> new_pos = pos_ + direction;
 	if (myEnv_.isFree(new_pos.first, new_pos.second))
 	{
 		myEnv_.moveCreature(pos_.first, pos_.second, new_pos.first, new_pos.second);
@@ -134,14 +134,12 @@ void Creature::createConnection(char sourceType, char endType, int sourceID, int
 
 			ActionNeuronTypes endNeuronType = config_.activeActionNeurons_[endID];
 			ActionNeuron* end = actionBrain_.find(endNeuronType)->second.get();
-			end->sensorWeights_.push_back(weight);
-			end->sensorInputs_.push_back(source);
+			end->createConnection(weight, source);
 		}
 		else
 		{
 			InternalNeuron* end = &(internalBrain_.find(endID)->second);
-			end->sensorWeights_.push_back(weight);
-			end->sensorInputs_.push_back(source);
+			end->createConnection(weight, source);
 		}
 	}
 	else
@@ -151,14 +149,12 @@ void Creature::createConnection(char sourceType, char endType, int sourceID, int
 		{
 			ActionNeuronTypes endNeuronType = config_.activeActionNeurons_[endID];
 			ActionNeuron* end = actionBrain_.find(endNeuronType)->second.get();
-			end->interWeights_.push_back(weight);
-			end->interInputs_.push_back(source);
+			end->createConnection(weight, source);
 		}
 		else
 		{
 			InternalNeuron* end = &(internalBrain_.find(endID)->second);
-			end->interWeights_.push_back(weight);
-			end->interInputs_.push_back(source);
+			end->createConnection(weight, source);
 		}
 	}
 }
@@ -219,32 +215,32 @@ void Creature::addActionNeuron(ActionNeuronTypes type)
 	{
 	case ActionNeuronTypes::MFR:
 	{
-		actionBrain_.insert(std::make_pair(type, std::make_unique<MFRNeuron>()));
+		actionBrain_.insert(std::make_pair(type, std::make_unique<MFRNeuron>(this,0.8)));
 		break;
 	}
 	case ActionNeuronTypes::Mrn:
 	{
-		actionBrain_.insert(std::make_pair(type, std::make_unique<MrnNeuron>()));
+		actionBrain_.insert(std::make_pair(type, std::make_unique<MrnNeuron>(this, 0.8)));
 		break;
 	}
 	case ActionNeuronTypes::MRL:
 	{
-		actionBrain_.insert(std::make_pair(type, std::make_unique<MRLNeuron>()));
+		actionBrain_.insert(std::make_pair(type, std::make_unique<MRLNeuron>(this, 0.8)));
 		break;
 	}
 	case ActionNeuronTypes::Mx:
 	{
-		actionBrain_.insert(std::make_pair(type, std::make_unique<MxNeuron>()));
+		actionBrain_.insert(std::make_pair(type, std::make_unique<MxNeuron>(this, 0.8)));
 		break;
 	}
 	case ActionNeuronTypes::My:
 	{
-		actionBrain_.insert(std::make_pair(type, std::make_unique<MyNeuron>()));
+		actionBrain_.insert(std::make_pair(type, std::make_unique<MyNeuron>(this, 0.8)));
 		break;
 	}
 	case ActionNeuronTypes::Kill:
 	{
-		actionBrain_.insert(std::make_pair(type, std::make_unique<KillNeuron>()));
+		actionBrain_.insert(std::make_pair(type, std::make_unique<KillNeuron>(this, 0.8)));
 		break;
 	}
 	default:

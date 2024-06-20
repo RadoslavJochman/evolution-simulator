@@ -3,7 +3,8 @@
 
 Environment::Environment(const Config& config)
 	:
-	numCreatures_(config.numCreatures_)
+	numCreatures_(config.numCreatures_),
+	config_(config)
 {
 	habitat_.resize(config.envSize_);
 	for (int i = 0; i < config.envSize_; ++i)
@@ -24,9 +25,9 @@ Environment::Environment(const Config& config)
 }
 bool Environment::isFree(int x, int y)
 {
-	if (x >= 0 && y >= 0 && x < config_.envSize && y < config_.envSize)
+	if (x >= 0 && y >= 0 && x < config_.envSize_ && y < config_.envSize_)
 	{
-		return habitat_[x, y] == nullptr;
+		return habitat_[x][y] == nullptr;
 	}
 	else return false;
 	

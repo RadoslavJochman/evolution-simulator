@@ -10,6 +10,12 @@
 #include "utilites.h"
 #include "Environment.h"
 
+enum class ActionNeuronTypes;
+enum class SensorNeuronTypes;
+class InternalNeuron;
+class ActionNeuron;
+class SensorNeuron;
+class Environment;
 
 class Creature
 {

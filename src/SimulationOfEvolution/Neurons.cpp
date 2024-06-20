@@ -1,5 +1,5 @@
 #include "Neurons.h"
-
+#include <ranges>
 float InternalNeuron::getActivation()
 {
 	float activation = 0;
@@ -12,6 +12,18 @@ float InternalNeuron::getActivation()
 		activation += i->getActivation() * j;
 	}
 	return activation;
+}
+
+void InternalNeuron::createConnection(double weight, InternalNeuron* source)
+{
+	interInputs_.push_back(source);
+	interWeights_.push_back(weight);
+}
+
+void InternalNeuron::createConnection(double weight, SensorNeuron* source)
+{
+	sensorInputs_.push_back(source);
+	sensorWeights_.push_back(weight);
 }
 
 //returns how many frames passed since start of current generation
@@ -74,6 +86,18 @@ double ActionNeuron::getActivation()
 		activation += sensorWeight * sensorNeuron->getActivation();
 	}
 	return activation;
+}
+
+void ActionNeuron::createConnection(double weight, InternalNeuron* source)
+{
+	interInputs_.push_back(source);
+	interWeights_.push_back(weight);
+}
+
+void ActionNeuron::createConnection(double weight, SensorNeuron* source)
+{
+	sensorInputs_.push_back(source);
+	sensorWeights_.push_back(weight);
 }
 
 //Kills creature infront
