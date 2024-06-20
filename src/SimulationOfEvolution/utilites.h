@@ -1,5 +1,5 @@
-#ifndef UTILITIES_H
-#define UTILITIES_H
+#ifndef MYUTILITIES_H
+#define MYUTILITIES_H
 #include <string>
 #include <sstream>
 #include <bitset>
@@ -7,6 +7,10 @@
 #include <fstream>
 #include <unordered_map>
 #include "Neurons.h"
+
+enum class ActionNeuronTypes { MFR, Mrn, MRL, Mx, My, Kill, UNKNOWN };
+enum class SensorNeuronTypes { Age, Rnd, BDy, BDx, BD, Lx, Ly, Osc, UNKNOWN };
+
 
 template<typename T, typename U>
 concept Addable = requires(T a, U b) {
@@ -36,7 +40,7 @@ auto operator*(const std::pair<T1, T2>& p1, const std::pair<U1, U2>& p2) -> std:
     return std::make_pair(p1.first * p2.first, p1.second * p2.second);
 }
 
-std::pair<int, int> generateRandomDirection() {
+inline std::pair<int, int> generateRandomDirection() {
     std::random_device rd;
     std::mt19937 gen(rd()); 
     std::uniform_int_distribution<> dis(0, 1); 
@@ -75,14 +79,20 @@ inline std::string hexToBin(const std::string& hex) {
 
 struct Config
 {
-	Config(std::size_t envSize, std::string envType, std::size_t numCreatures, std::size_t maxInternalNeurons, std::vector<SensorNeuronTypes> activeSensorNeurons, std::vector<ActionNeuronTypes> activeActionNeurons, std::size_t numGenes)
-		:
-		envSize_(envSize),
-		envType_(envType),
-		numCreatures_(numCreatures),
-		maxInternalNeurons_(maxInternalNeurons),
-		activeSensorNeurons_(activeSensorNeurons),
-		activeActionNeurons_(activeActionNeurons),
+    Config(std::size_t envSize,
+        std::string envType,
+        std::size_t numCreatures,
+        std::size_t maxInternalNeurons,
+        std::vector<SensorNeuronTypes> activeSensorNeurons = {},
+        std::vector<ActionNeuronTypes> activeActionNeurons = {},
+        std::size_t numGenes = 0)
+        : 
+        envSize_(envSize),
+        envType_(std::move(envType)),
+        numCreatures_(numCreatures),
+        maxInternalNeurons_(maxInternalNeurons),
+        activeSensorNeurons_(std::move(activeSensorNeurons)),
+        activeActionNeurons_(std::move(activeActionNeurons)),
         numGenes_(numGenes)
 
 	{}
@@ -107,7 +117,7 @@ enum ConfigKey {
     UNKNOWN
 };
 
-ConfigKey getConfigKey(const std::string& key) {
+inline ConfigKey getConfigKey(const std::string& key) {
     static const std::unordered_map<std::string, ConfigKey> keyMap = {
         {"env_size", ENV_SIZE},
         {"env_type", ENV_TYPE},
@@ -127,7 +137,7 @@ ConfigKey getConfigKey(const std::string& key) {
     }
 }
 
-ActionNeuronTypes getActionNeuron(const std::string& name)
+inline ActionNeuronTypes getActionNeuron(const std::string& name)
 {
     static const std::unordered_map<std::string, ActionNeuronTypes> actionNeuronMap = {
     {"MFR", ActionNeuronTypes::MFR},
@@ -147,7 +157,7 @@ ActionNeuronTypes getActionNeuron(const std::string& name)
     }
 }
 
-SensorNeuronTypes getSensorNeuron(const std::string& name)
+inline SensorNeuronTypes getSensorNeuron(const std::string& name)
 {
     static const std::unordered_map<std::string, SensorNeuronTypes> sensorNeuronMap = {
     {"Age", SensorNeuronTypes::Age},
@@ -168,7 +178,7 @@ SensorNeuronTypes getSensorNeuron(const std::string& name)
     }
 }
 
-Config readConfig(const std::string& filename) {
+inline Config readConfig(const std::string& filename) {
     std::ifstream file(filename);
     if (!file.is_open()) {
         throw std::runtime_error("Unable to open file");
