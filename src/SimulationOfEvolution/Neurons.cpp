@@ -14,42 +14,49 @@ float InternalNeuron::getActivation()
 	return activation;
 }
 
-
+//returns how many frames passed since start of current generation
 float AgeNeuron::getActivation()
 {
 	return 0.0f;
 }
 
+//returns random number
 float RndNeuron::getActivation()
 {
 	return 0.0f;
 }
 
+//returns distance from north/south border
 float BDyNeuron::getActivation()
 {
 	return 0.0f;
 }
 
+//returns distance from east/west border
 float BDxNeuron::getActivation()
 {
 	return 0.0f;
 }
 
+//returns neares border distance
 float BDNeuron::getActivation()
 {
 	return 0.0f;
 }
 
+//returns x location
 float LxNeuron::getActivation()
 {
 	return 0.0f;
 }
 
+//returns y location
 float LyNeuron::getActivation()
 {
 	return 0.0f;
 }
 
+//oscillate and returns the value of this oscillation
 float OscNeuron::getActivation()
 {
 	return 0.0f;
@@ -69,50 +76,91 @@ double ActionNeuron::getActivation()
 	return activation;
 }
 
+//Kills creature infront
 void KillNeuron::step()
 {
-	if (getActivation() >= activationTreshold_)
+	if (std::fabs(getActivation()) >= activationTreshold_)
 	{
 
 	}
 }
 
+//Moves along y axis
 void MyNeuron::step()
 {
-	if (getActivation() >= activationTreshold_)
+	double activation = getActivation();
+	if (std::fabs(activation) >= activationTreshold_)
 	{
-
+		if (activation > 0)
+		{
+			owner_->updatePosition({ 0, 1 });
+		}
+		else
+		{
+			owner_->updatePosition({ 0, -1 });
+		}
+		
 	}
 }
 
+//Moves along x axis
 void MxNeuron::step()
 {
-	if (getActivation() >= activationTreshold_)
+	double activation = getActivation();
+	if (std::fabs(activation) >= activationTreshold_)
 	{
+		if (activation > 0)
+		{
+			owner_->updatePosition({ 1, 0 });
+		}
+		else
+		{
+			owner_->updatePosition({ -1, 0 });
+		}
 
 	}
 }
 
+//Moves left/right
 void MRLNeuron::step()
 {
-	if (getActivation() >= activationTreshold_)
+	double activation = getActivation();
+	if (std::fabs(activation) >= activationTreshold_)
 	{
-
+		if (activation > 0)
+		{
+			owner_->moveRight({ 1, -1 });
+		}
+		else
+		{
+			owner_->moveRight({ -1, 1 });
+		}
 	}
 }
 
+//Moves in random direction
 void MrnNeuron::step()
 {
-	if (getActivation() >= activationTreshold_)
+	if (std::fabs(getActivation()) >= activationTreshold_)
 	{
-
+		owner_->updatePosition(generateRandomDirection());
 	}
 }
 
+//Moves forwards/backwards
 void MFRNeuron::step()
 {
-	if (getActivation() >= activationTreshold_)
+	double activation = getActivation();
+	if (std::fabs(activation) >= activationTreshold_)
 	{
+		if (activation > 0)
+		{
+			owner_->moveForward({ 1,1 });
+		}
+		else
+		{
+			owner_->moveForward({ -1,-1 });
+		}
 
 	}
 }

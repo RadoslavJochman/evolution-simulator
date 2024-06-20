@@ -22,8 +22,20 @@ void Creature::step()
 	}
 }
 
-void Creature::updatePosition()
+void Creature::moveRight(const std::pair<int, int>& direction)
 {
+	direction_ = swapPairValues(direction_) * direction;
+	std::pair<std::size_t, std::size_t> new_pos = pos_ + direction_;
+	if (myEnv_.isFree(new_pos.first, new_pos.second))
+	{
+		myEnv_.moveCreature(pos_.first, pos_.second, new_pos.first, new_pos.second);
+		pos_ = new_pos;
+	}
+}
+
+void Creature::moveForward(const std::pair<int, int>& direction)
+{
+	direction_ = direction_ * direction;
 	std::pair<std::size_t, std::size_t> new_pos = pos_ + direction_;
 	if (myEnv_.isFree(new_pos.first, new_pos.second))
 	{
@@ -34,7 +46,7 @@ void Creature::updatePosition()
 
 void Creature::updatePosition(const std::pair<int, int>& direction)
 {
-	direction_ = direction;
+	
 	std::pair<std::size_t, std::size_t> new_pos = pos_ + direction;
 	if (myEnv_.isFree(new_pos.first, new_pos.second))
 	{

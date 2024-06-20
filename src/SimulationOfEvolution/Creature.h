@@ -20,7 +20,8 @@ public:
 	Creature(Creature&&) noexcept = default;
 	Creature& operator=(Creature&&) noexcept = default;
 	void step();
-	void updatePosition();
+	void moveRight(const std::pair<int, int>& direction);
+	void moveForward(const std::pair<int, int>& direction);
 	void updatePosition(const std::pair<int, int>& direction);
 private:
 	Environment& myEnv_;
