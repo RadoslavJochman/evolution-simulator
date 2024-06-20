@@ -8,18 +8,25 @@
 #include "Neurons.h"
 
 
-
 class Creature
 {
 public:
 	Creature(std::pair<std::size_t, std::size_t>&& pos, const Config& config);
+	Creature(const Creature&) = delete;
+	Creature& operator=(const Creature&) = delete;
+	Creature(Creature&&) noexcept = default;
+	Creature& operator=(Creature&&) noexcept = default;
+	void step();
+	void updatePosition();
+	void updatePosition(const std::pair<int, int>& direction);
 private:
 	Config config_;
 	std::vector<std::string> genome_;
 	std::unordered_map<SensorNeuronTypes, std::unique_ptr<SensorNeuron>> sensorBrain_;
-	std::unordered_map<int, InternalNeuron> internalBrain_;
+	std::unordered_map<std::size_t, InternalNeuron> internalBrain_;
 	std::unordered_map<ActionNeuronTypes, std::unique_ptr<ActionNeuron>> actionBrain_;
 	std::pair<std::size_t, std::size_t> pos_;
+	std::pair<int, int> direction_;
 	void createGenome();
 	void buildBrain();
 	void addSensorNeuron(SensorNeuronTypes type);
