@@ -13,10 +13,40 @@ concept Addable = requires(T a, U b) {
     { a + b };
 };
 
+template<typename T, typename U>
+concept Multipliable = requires(T a, U b) {
+    { a * b };
+};
+
+template<typename T, typename U>
+std::pair<U, T> swapPairValues(std::pair<T, U> p)
+{
+    return std::make_pair(p.second, p.first);
+}
+
 template<typename T1, typename T2, typename U1, typename U2>
     requires Addable<T1, U1>&& Addable<T2, U2>
 auto operator+(const std::pair<T1, T2>& p1, const std::pair<U1, U2>& p2) -> std::pair<decltype(p1.first + p2.first), decltype(p1.second + p2.second)> {
     return std::make_pair(p1.first + p2.first, p1.second + p2.second);
+}
+
+template<typename T1, typename T2, typename U1, typename U2>
+    requires Multipliable<T1, U1>&& Multipliable<T2, U2>
+auto operator*(const std::pair<T1, T2>& p1, const std::pair<U1, U2>& p2) -> std::pair<decltype(p1.first * p2.first), decltype(p1.second * p2.second)> {
+    return std::make_pair(p1.first * p2.first, p1.second * p2.second);
+}
+
+std::pair<int, int> generateRandomDirection() {
+    std::random_device rd;
+    std::mt19937 gen(rd()); 
+    std::uniform_int_distribution<> dis(0, 1); 
+    std::uniform_int_distribution<> index_dis(0, 1);
+    int index = index_dis(gen);
+    std::pair<int, int> result;
+    result.first = (index == 0) ? 0 : (dis(gen) == 0 ? 1 : -1);
+    result.second = (index == 1) ? 0 : (dis(gen) == 0 ? -1 : 1);
+
+    return result;
 }
 
 inline std::string hexToBin(const std::string& hex) {

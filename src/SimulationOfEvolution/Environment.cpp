@@ -22,9 +22,14 @@ Environment::Environment(const Config& config)
 		habitat_[pos.rem][pos.quot] = &(creatures_.back());
 	}
 }
-bool Environment::isFree(std::size_t x, std::size_t y)
+bool Environment::isFree(int x, int y)
 {
-	return habitat_[x, y] == nullptr
+	if (x >= 0 && y >= 0 && x < config_.envSize && y < config_.envSize)
+	{
+		return habitat_[x, y] == nullptr;
+	}
+	else return false;
+	
 }
 void Environment::moveCreature(std::size_t x, std::size_t y, std::size_t new_x, std::size_t new_y)
 {
