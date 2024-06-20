@@ -2,8 +2,9 @@
 #include "utilites.h"
 #include <ranges>
 
-Creature::Creature(std::pair<std::size_t, std::size_t>&& pos, const Config& config)
+Creature::Creature(std::pair<std::size_t, std::size_t>&& pos, const Config& config, Environment& myEnv)
 	:
+	myEnv_(myEnv),
 	config_(config),
 	pos_(pos),
 	direction_({ 1,0 })
@@ -23,7 +24,23 @@ void Creature::step()
 
 void Creature::updatePosition()
 {
-	pos_ = pos_ + direction_;
+	std::pair<std::size_t, std::size_t> new_pos = pos_ + direction_;
+	if (myEnv_.isFree(new_pos.first, new_pos.second))
+	{
+		myEnv_.moveCreature(pos_.first, pos_.second, new_pos.first, new_pos.second);
+		pos_ = new_pos;
+	}
+}
+
+void Creature::updatePosition(const std::pair<int, int>& direction)
+{
+	direction_ = direction;
+	std::pair<std::size_t, std::size_t> new_pos = pos_ + direction;
+	if (myEnv_.isFree(new_pos.first, new_pos.second))
+	{
+		myEnv_.moveCreature(pos_.first, pos_.second, new_pos.first, new_pos.second);
+		pos_ = new_pos;
+	}
 }
 
 void Creature::createGenome()

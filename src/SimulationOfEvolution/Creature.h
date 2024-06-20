@@ -8,12 +8,13 @@
 #include <unordered_map>
 #include "Neurons.h"
 #include "utilites.h"
+#include "Environment.h"
 
 
 class Creature
 {
 public:
-	Creature(std::pair<std::size_t, std::size_t>&& pos, const Config& config);
+	Creature(std::pair<std::size_t, std::size_t>&& pos, const Config& config, Environment& myEnv);
 	Creature(const Creature&) = delete;
 	Creature& operator=(const Creature&) = delete;
 	Creature(Creature&&) noexcept = default;
@@ -22,7 +23,8 @@ public:
 	void updatePosition();
 	void updatePosition(const std::pair<int, int>& direction);
 private:
-	Config config_;
+	Environment& myEnv_;
+	const Config& config_;
 	std::vector<std::string> genome_;
 	std::unordered_map<SensorNeuronTypes, std::unique_ptr<SensorNeuron>> sensorBrain_;
 	std::unordered_map<std::size_t, InternalNeuron> internalBrain_;
