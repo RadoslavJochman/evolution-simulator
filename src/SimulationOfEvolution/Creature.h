@@ -22,6 +22,7 @@ class Creature
 {
 public:
 	Creature(std::pair<int, int>&& pos, const Config* config, Environment* myEnv);
+	Creature(std::pair<int, int>&& pos, const Config* config, Environment* myEnv, std::vector<std::string>&& genome);
 	Creature();
 	Creature(const Creature&) = delete;
 	Creature& operator=(const Creature&) = delete;
@@ -34,8 +35,13 @@ public:
 	const std::pair<std::size_t, std::size_t>& getPosition() const;
 	void buildBrain();
 	const std::array<int,3> getColor() const;
+	void die();
+	bool isKilled();
 	const Config* config_;
+	Creature breed(const Creature& c1, std::pair<int, int>&& pos);
+	void mutate();
 private:
+	bool killed;
 	Environment* myEnv_;
 	std::vector<std::string> genome_;
 	std::unordered_map<SensorNeuronTypes, std::unique_ptr<SensorNeuron>> sensorBrain_;
@@ -47,5 +53,6 @@ private:
 	void addSensorNeuron(SensorNeuronTypes type);
 	void addActionNeuron(ActionNeuronTypes type);
 	void createConnection(char sourceType, char endType, int sourceID, int endID, int weight);
+
 };
 #endif

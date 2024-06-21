@@ -89,7 +89,8 @@ struct Config
         std::vector<ActionNeuronTypes> activeActionNeurons = {},
         std::size_t numGenes = 0,
         std::size_t numGenerations=0,
-        std::size_t numSteps=0)
+        std::size_t numSteps=0,
+        std::size_t killZoneSize=0)
         : 
         envSize_(envSize),
         envType_(std::move(envType)),
@@ -99,7 +100,8 @@ struct Config
         activeActionNeurons_(std::move(activeActionNeurons)),
         numGenes_(numGenes),
         numGenerations_(numGenerations),
-        numSteps_(numSteps)
+        numSteps_(numSteps),
+        killZoneSize_(killZoneSize)
 
 	{}
     Config()
@@ -125,6 +127,7 @@ struct Config
     std::size_t numGenes_;
     std::size_t numGenerations_;
     std::size_t numSteps_;
+    std::size_t killZoneSize_;
 };
 
 enum ConfigKey {
@@ -201,7 +204,7 @@ inline SensorNeuronTypes getSensorNeuron(const std::string& name)
     }
 }
 
-inline Config readConfig(const std::string& filename) {
+/*inline Config readConfig(const std::string& filename) {
     std::ifstream file(filename);
     if (!file.is_open()) {
         throw std::runtime_error("Unable to open file");
@@ -272,5 +275,5 @@ inline Config readConfig(const std::string& filename) {
     }
 
     return Config(envSize, envType, numCreatures, maxInternalNeurons, sensorNeuronsType, actionNeuronsType, numGenes, numGenerations, numSteps);
-}
+}*/
 #endif

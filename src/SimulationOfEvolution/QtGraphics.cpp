@@ -30,7 +30,7 @@ void GridWidget::startAnimation() {
     circleColors_.clear();
     frameCount_ = 0;
     generateColors();
-    timer_.start(1000 / 10);
+    timer_.start(1000 / 60);
 }
 
 void GridWidget::updateFrame() 
@@ -39,14 +39,17 @@ void GridWidget::updateFrame()
     {
         if (frameCount_ >= config_.numSteps_) 
         {
+            myEnv_.killCreatures();
+            myEnv_.newGeneration(0.1);
             circleColors_.clear();
             generateColors();
             frameCount_ = 0;
+            genCount_++;
         }
         generateCircles();
         myEnv_.step();
         frameCount_++;
-        update(); // Request a paint event
+        update();
     }
     else
     {
@@ -114,7 +117,7 @@ DialogWindow::DialogWindow(QWidget* parent)
     okButton_("OK")
 
 {
-    envTypeBox_.addItems({ "Square in the middle", });
+    envTypeBox_.addItems({ "Square Killzone", });
 
     activeSensorNeuronsEdit_.addItems({ "Rnd", "BDy", "BD", "Lx", "Ly" });
     activeSensorNeuronsEdit_.setSelectionMode(QAbstractItemView::MultiSelection);
@@ -123,6 +126,7 @@ DialogWindow::DialogWindow(QWidget* parent)
 
     formLayout_.addRow("Environment size:", &envSizeEdit_);
     formLayout_.addRow("Environment type:", &envTypeBox_);
+    formLayout_.addRow("Killzone size:", &killZoneSizeEdit_);
     formLayout_.addRow("Number of creatures:", &numCreaturesEdit_);
     formLayout_.addRow("Max number of internal neurons:", &maxInternalNeuronsEdit_);
     formLayout_.addRow("Active sensor neurons:", &activeSensorNeuronsEdit_);
@@ -141,9 +145,10 @@ DialogWindow::DialogWindow(QWidget* parent)
 
 void DialogWindow::handleOkButtonClicked() 
 {
-    bool sizeOk, numCreaturesOk, maxInternalNeuronsOk, numGenesOk, numGenerationsOk, numStepsOk;
+    bool sizeOk, killZoneSizeOk, numCreaturesOk, maxInternalNeuronsOk, numGenesOk, numGenerationsOk, numStepsOk;
     std::size_t envSize = envSizeEdit_.text().toInt(&sizeOk);
     std::string envType = envTypeBox_.currentText().toStdString();
+    std::size_t killZoneSize = killZoneSizeEdit_.text().toInt();
     std::size_t numCreatures = numCreaturesEdit_.text().toInt(&numCreaturesOk);
     std::size_t maxInternalNeurons = maxInternalNeuronsEdit_.text().toInt(&maxInternalNeuronsOk);
     std::size_t numGenes = numGenesEdit_.text().toInt(&numGenesOk);
@@ -159,7 +164,7 @@ void DialogWindow::handleOkButtonClicked()
     std::size_t numSteps = numStepsEdit_.text().toInt(&numStepsOk);
     if (sizeOk && numCreaturesOk && maxInternalNeuronsOk && numGenesOk && numGenerationsOk && numStepsOk)
     {
-        Config config(envSize, envType, numCreatures, maxInternalNeurons, std::move(activeSensorNeurons), std::move(activeActionNeurons), numGenes, numGenerations, numSteps);
+        Config config(envSize, envType, numCreatures, maxInternalNeurons, std::move(activeSensorNeurons), std::move(activeActionNeurons), numGenes, numGenerations, numSteps, killZoneSize);
         emit dialogSelected(config);
         accept();
     }

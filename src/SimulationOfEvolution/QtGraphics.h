@@ -59,6 +59,7 @@ private:
     QFormLayout formLayout_;
     QLineEdit envSizeEdit_;
     QComboBox envTypeBox_;
+    QLineEdit killZoneSizeEdit_;
     QLineEdit numCreaturesEdit_;
     QLineEdit maxInternalNeuronsEdit_;
     QListWidget activeSensorNeuronsEdit_;

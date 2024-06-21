@@ -20,10 +20,13 @@ public:
 	void moveCreature(std::size_t x, std::size_t y, std::size_t new_x, std::size_t new_y);
 	const std::vector<Creature>& getCreatures() const;
 	void step();
+	void newGeneration(double mutationRate);
+	void killCreatures();
 private:
 	const Config* config_;
 	std::size_t numCreatures_;
 	std::vector<Creature> creatures_;
 	std::vector<std::vector<Creature*>> habitat_;
+	void killSquare(std::size_t size);
 };
 #endif

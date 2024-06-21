@@ -4,19 +4,31 @@
 
 Creature::Creature(std::pair<int,int>&& pos, const Config* config, Environment* myEnv)
 	:
-	myEnv_(myEnv),
 	config_(config),
-	pos_(pos),
+	killed(false),
+	myEnv_(myEnv),
+	pos_(std::move(pos)),
 	direction_({ 1,0 })
 
 {
 	createGenome();
 }
 
+Creature::Creature(std::pair<int, int>&& pos, const Config* config, Environment* myEnv, std::vector<std::string>&& genome)
+	:
+	config_(config),
+	killed(false),
+	myEnv_(myEnv),
+	genome_(std::move(genome)),
+	pos_(std::move(pos)),
+	direction_({ 1,0 })
+{}
+
 Creature::Creature()
 	:
-	myEnv_(nullptr),
 	config_(nullptr),
+	killed(false),
+	myEnv_(nullptr),
 	pos_({ 0,0 }),
 	direction_({ 1,0 })
 {}
@@ -70,7 +82,7 @@ const std::pair<std::size_t, std::size_t>& Creature::getPosition() const
 void Creature::createGenome()
 {
 	std::random_device rd;
-	std::mt19937 gen(rd());
+	std::mt19937 rndGenerator(rd());
 	std::uniform_int_distribution<> dis(0, 15);
 
 	for (auto&& i : std::ranges::iota_view<std::size_t, std::size_t>(0, config_->numGenes_))
@@ -78,7 +90,7 @@ void Creature::createGenome()
 		std::stringstream gene;
 		for (auto&& j : std::ranges::iota_view(0, 8))
 		{
-			int randNumb = dis(gen);
+			int randNumb = dis(rndGenerator);
 			gene << std::hex << randNumb;
 		}
 		genome_.push_back(gene.str());
@@ -154,6 +166,16 @@ const std::array<int, 3> Creature::getColor() const
 	return { r, g, b };
 }
 
+void Creature::die()
+{
+	killed = true;
+}
+
+bool Creature::isKilled()
+{
+	return killed;
+}
+
 void Creature::createConnection(char sourceType, char endType, int sourceID, int endID, int weight)
 {
 	if (sourceType == '0' || (sourceType == '1' && endType == '1') || config_->maxInternalNeurons_ == 0)
@@ -191,6 +213,34 @@ void Creature::createConnection(char sourceType, char endType, int sourceID, int
 	}
 }
 
+Creature Creature::breed(const Creature& c1, std::pair<int, int>&& pos)
+{
+	std::vector<std::string> genome;
+	std::random_device rd;
+	std::mt19937 rndGenerator(rd());
+	std::uniform_int_distribution<> dist(0, 1);
+	for (auto&& [gene1, gene2] : std::ranges::zip_view(c1.genome_, genome_))
+	{
+		int randomIndex = dist(rndGenerator);
+		genome.push_back((randomIndex == 0) ? gene1 : gene2);
+	}
+	return Creature(std::move(pos), config_, myEnv_, std::move(genome));
+}
+
+void Creature::mutate()
+{
+	std::random_device rd;
+	std::mt19937 rndGenerator(rd());
+	std::array<char, 16> hexDigits({'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'});
+	std::uniform_int_distribution<> genePicker(0, config_->numGenes_-1);
+	int geneIndex = genePicker(rndGenerator);
+	std::uniform_int_distribution<> basePicker(0, 8);
+	int baseIndex = basePicker(rndGenerator);
+	std::uniform_int_distribution<> newBasePicker(0, 15);
+	int newBaseIndex = newBasePicker(rndGenerator);
+	genome_[geneIndex][baseIndex] = hexDigits[newBaseIndex];
+}
+
 void Creature::addSensorNeuron(SensorNeuronTypes type)
 {
 	switch (type)
@@ -208,6 +258,7 @@ void Creature::addSensorNeuron(SensorNeuronTypes type)
 	case SensorNeuronTypes::BDx:
 	{
 		sensorBrain_.insert(std::make_pair(type, std::make_unique<BDxNeuron>(this)));
+		break;
 	}
 	case SensorNeuronTypes::BD:
 	{
