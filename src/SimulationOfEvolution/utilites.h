@@ -9,7 +9,7 @@
 #include "Neurons.h"
 
 enum class ActionNeuronTypes { MFR, Mrn, MRL, Mx, My, Kill, UNKNOWN };
-enum class SensorNeuronTypes { Age, Rnd, BDy, BDx, BD, Lx, Ly, Osc, UNKNOWN };
+enum class SensorNeuronTypes { Rnd, BDy, BDx, BD, Lx, Ly, UNKNOWN };
 
 
 template<typename T, typename U>
@@ -183,13 +183,11 @@ inline ActionNeuronTypes getActionNeuron(const std::string& name)
 inline SensorNeuronTypes getSensorNeuron(const std::string& name)
 {
     static const std::unordered_map<std::string, SensorNeuronTypes> sensorNeuronMap = {
-    {"Age", SensorNeuronTypes::Age},
     {"Rnd", SensorNeuronTypes::Rnd},
     {"BDy", SensorNeuronTypes::BDy},
     {"BD", SensorNeuronTypes::BD},
     {"Lx", SensorNeuronTypes::Lx},
-    {"Ly", SensorNeuronTypes::Ly},
-    {"Osc", SensorNeuronTypes::Osc}
+    {"Ly", SensorNeuronTypes::Ly}
     };
 
     auto it = sensorNeuronMap.find(name);

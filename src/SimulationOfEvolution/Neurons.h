@@ -5,7 +5,7 @@
 #include <ranges>
 #include <iostream>
 #include "Creature.h"
-
+#include <random>
 enum class ActionNeuronTypes;
 enum class SensorNeuronTypes; 
 class Creature;
@@ -50,46 +50,73 @@ protected:
 	double getActivation();
 };
 
-class AgeNeuron : public SensorNeuron
+
+class RndNeuron : public SensorNeuron
 {
 public:
 	float getActivation() override;
 };
 
-class RndNeuron : public SensorNeuron
-{
-	float getActivation() override;
-};
-
 class BDyNeuron : public SensorNeuron
 {
+public:
 	float getActivation() override;
+	BDyNeuron(const Creature* owner)
+		:
+		owner_(owner)
+	{}
+private:
+	const Creature* owner_;
 };
 
 class BDxNeuron : public SensorNeuron
 {
+public:
 	float getActivation() override;
+	BDxNeuron(const Creature* owner)
+		:
+		owner_(owner)
+	{}
+private:
+	const Creature* owner_;
 };
 
 class BDNeuron : public SensorNeuron
 {
+public:
 	float getActivation() override;
+	BDNeuron(const Creature* owner)
+		:
+		owner_(owner)
+	{}
+private:
+	const Creature* owner_;
 };
 
 class LxNeuron : public SensorNeuron
 {
+public:
 	float getActivation() override;
+	LxNeuron(const Creature* owner)
+		:
+		owner_(owner)
+	{}
+private:
+	const Creature* owner_;
 };
 
 class LyNeuron : public SensorNeuron
 {
+public:
 	float getActivation() override;
+	LyNeuron(const Creature* owner)
+		:
+		owner_(owner)
+	{}
+private:
+	const Creature* owner_;
 };
 
-class OscNeuron : public SensorNeuron
-{
-	float getActivation() override;
-};
 
 class MFRNeuron : public ActionNeuron
 {

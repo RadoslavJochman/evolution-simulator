@@ -26,53 +26,46 @@ void InternalNeuron::createConnection(double weight, SensorNeuron* source)
 	sensorWeights_.push_back(weight);
 }
 
-//returns how many frames passed since start of current generation
-float AgeNeuron::getActivation()
-{
-	return 1.0f;
-}
-
 //returns random number
 float RndNeuron::getActivation()
 {
-	return 1.0f;
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<> dis(-1, 1);
+	return dis(gen);
 }
 
 //returns distance from north/south border
 float BDyNeuron::getActivation()
 {
-	return 1.0f;
+	return -1 + owner_->getPosition().second * (2.0f / owner_->config_->envSize_);
 }
 
 //returns distance from east/west border
 float BDxNeuron::getActivation()
 {
-	return 1.0f;
+	return -1 + owner_->getPosition().first * (2.0f / owner_->config_->envSize_);
 }
 
 //returns neares border distance
 float BDNeuron::getActivation()
 {
-	return 1.0f;
+	return std::min(std::fabs(-1 + owner_->getPosition().first * (2.0f / owner_->config_->envSize_)),
+							  -1 + owner_->getPosition().second * (2.0f / owner_->config_->envSize_));
 }
 
 //returns x location
 float LxNeuron::getActivation()
 {
-	return 1.0f;
+	return owner_->getPosition().first * (2.0f / owner_->config_->envSize_);
 }
 
 //returns y location
 float LyNeuron::getActivation()
 {
-	return 1.0f;
+	return owner_->getPosition().second * (2.0f / owner_->config_->envSize_);
 }
 
-//oscillate and returns the value of this oscillation
-float OscNeuron::getActivation()
-{
-	return 1.0f;
-}
 
 double ActionNeuron::getActivation()
 {

@@ -178,11 +178,6 @@ void Creature::addSensorNeuron(SensorNeuronTypes type)
 {
 	switch (type)
 	{
-	case SensorNeuronTypes::Age:
-	{
-		sensorBrain_.insert(std::make_pair(type, std::make_unique<AgeNeuron>()));
-		break;
-	}
 	case SensorNeuronTypes::Rnd:
 	{
 		sensorBrain_.insert(std::make_pair(type, std::make_unique<RndNeuron>()));
@@ -190,31 +185,26 @@ void Creature::addSensorNeuron(SensorNeuronTypes type)
 	}
 	case SensorNeuronTypes::BDy:
 	{
-		sensorBrain_.insert(std::make_pair(type, std::make_unique<BDyNeuron>()));
+		sensorBrain_.insert(std::make_pair(type, std::make_unique<BDyNeuron>(this)));
 		break;
 	}
 	case SensorNeuronTypes::BDx:
 	{
-		sensorBrain_.insert(std::make_pair(type, std::make_unique<BDxNeuron>()));
+		sensorBrain_.insert(std::make_pair(type, std::make_unique<BDxNeuron>(this)));
 	}
 	case SensorNeuronTypes::BD:
 	{
-		sensorBrain_.insert(std::make_pair(type, std::make_unique<BDNeuron>()));
+		sensorBrain_.insert(std::make_pair(type, std::make_unique<BDNeuron>(this)));
 		break;
 	}
 	case SensorNeuronTypes::Lx:
 	{
-		sensorBrain_.insert(std::make_pair(type, std::make_unique<LxNeuron>()));
+		sensorBrain_.insert(std::make_pair(type, std::make_unique<LxNeuron>(this)));
 		break;
 	}
 	case SensorNeuronTypes::Ly:
 	{
-		sensorBrain_.insert(std::make_pair(type, std::make_unique<LyNeuron>()));
-		break;
-	}
-	case SensorNeuronTypes::Osc:
-	{
-		sensorBrain_.insert(std::make_pair(type, std::make_unique<OscNeuron>()));
+		sensorBrain_.insert(std::make_pair(type, std::make_unique<LyNeuron>(this)));
 		break;
 	}
 	default:
