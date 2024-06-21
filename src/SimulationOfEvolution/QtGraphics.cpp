@@ -5,7 +5,9 @@ GridWidget::GridWidget(Config&& config, QWidget* parent)
     QWidget(parent),
     config_(std::move(config)),
     myEnv_(&config_),
-    timer_(this)
+    timer_(this),
+    frameCount_(0),
+    genCount_(0)
 {
     setFixedSize(800, 800);
     generateCircles();
@@ -18,26 +20,40 @@ GridWidget::GridWidget()
     QWidget(nullptr),
     config_(),
     myEnv_(&config_),
-    frameCount_(0)
+    timer_(this),
+    frameCount_(0),
+    genCount_(0)
 {
 }
 
 void GridWidget::startAnimation() {
+    circleColors_.clear();
     frameCount_ = 0;
-    circles_.clear();
+    generateColors();
     timer_.start(1000 / 10);
 }
 
 void GridWidget::updateFrame() 
 {
-    if (frameCount_ >= config_.numSteps_) {
+    if (genCount_ < config_.numGenerations_)
+    {
+        if (frameCount_ >= config_.numSteps_) 
+        {
+            circleColors_.clear();
+            generateColors();
+            frameCount_ = 0;
+        }
+        generateCircles();
+        myEnv_.step();
+        frameCount_++;
+        update(); // Request a paint event
+    }
+    else
+    {
         timer_.stop();
         return;
     }
-    generateCircles();
-    myEnv_.step();
-    frameCount_++;
-    update(); // Request a paint event
+
 }
 
 
@@ -48,9 +64,10 @@ void GridWidget::paintEvent(QPaintEvent* event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    painter.setBrush(Qt::red);
-    for (const QRect& rect : circles_) 
+    
+    for (auto&& [rect, color] : std::ranges::zip_view(circles_, circleColors_))
     {
+        painter.setBrush(color);
         painter.drawEllipse(rect);
     }
 }
@@ -65,9 +82,18 @@ void GridWidget::generateCircles()
         const std::pair<std::size_t, std::size_t>& pos = creature.getPosition();
         int x = (pos.first+1) * cellWidth;
         int y = (pos.second+1) * cellHeight;
+        std::string hexColor;
         circles_.append(QRect(x, y, cellWidth, cellHeight));
     }
-    update();
+}
+
+void GridWidget::generateColors()
+{
+    for (auto&& creature : myEnv_.getCreatures())
+    {
+        std::array<int, 3> RGBColor = creature.getColor();
+        circleColors_.append(QColor(RGBColor.at(0), RGBColor.at(1), RGBColor.at(2)));
+    }
 }
 
 
@@ -90,7 +116,7 @@ DialogWindow::DialogWindow(QWidget* parent)
 {
     envTypeBox_.addItems({ "Square in the middle", });
 
-    activeSensorNeuronsEdit_.addItems({ "Age", "Rnd", "BDy", "BD", "Lx", "Ly", "Osc" });
+    activeSensorNeuronsEdit_.addItems({ "Rnd", "BDy", "BD", "Lx", "Ly" });
     activeSensorNeuronsEdit_.setSelectionMode(QAbstractItemView::MultiSelection);
     activeActionNeuronsEdit_.addItems({ "MFR", "Mrn", "MRL", "Mx", "My", "Kill" });
     activeActionNeuronsEdit_.setSelectionMode(QAbstractItemView::MultiSelection);

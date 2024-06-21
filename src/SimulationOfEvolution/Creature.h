@@ -6,6 +6,7 @@
 #include <sstream>
 #include <vector>
 #include <unordered_map>
+#include <array>
 #include "Neurons.h"
 #include "utilites.h"
 #include "Environment.h"
@@ -32,6 +33,7 @@ public:
 	void updatePosition(const std::pair<int, int>& direction);
 	const std::pair<std::size_t, std::size_t>& getPosition() const;
 	void buildBrain();
+	const std::array<int,3> getColor() const;
 	const Config* config_;
 private:
 	Environment* myEnv_;

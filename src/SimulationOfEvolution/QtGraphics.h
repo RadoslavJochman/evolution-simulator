@@ -13,6 +13,7 @@
 #include <QMenuBar>
 #include <QListWidget>
 #include <QComboBox>
+#include <QAnyStringView>
 #include <memory>
 #include "Environment.h"
 
@@ -28,11 +29,14 @@ protected:
 
 private:
     QVector<QRect> circles_;
+    QVector<QColor> circleColors_;
     Config config_;
     Environment myEnv_;
     QTimer timer_;
     int frameCount_;
+    int genCount_;
     void generateCircles();
+    void generateColors();
     void updateFrame();
     
 };

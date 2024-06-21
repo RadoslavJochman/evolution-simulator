@@ -53,6 +53,8 @@ inline std::pair<int, int> generateRandomDirection() {
     return result;
 }
 
+
+
 inline std::string hexToBin(const std::string& hex) {
     static const std::unordered_map<char, std::string> hexToBinMap = {
         {'0', "0000"}, {'1', "0001"}, {'2', "0010"}, {'3', "0011"},

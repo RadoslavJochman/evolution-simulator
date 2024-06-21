@@ -137,6 +137,23 @@ void Creature::buildBrain()
 	}
 }
 
+const std::array<int, 3> Creature::getColor() const
+{
+	int r = 0;
+	int g = 0;
+	int b = 0;
+	for (auto&& gene : genome_)
+	{
+		r += std::stoi(gene.substr(0, 2), nullptr, 16);
+		g += std::stoi(gene.substr(2, 2), nullptr, 16);
+		b += std::stoi(gene.substr(4, 2), nullptr, 16);
+	}
+	r = r / genome_.size();
+	g = g / genome_.size();
+	b = b / genome_.size();
+	return { r, g, b };
+}
+
 void Creature::createConnection(char sourceType, char endType, int sourceID, int endID, int weight)
 {
 	if (sourceType == '0' || (sourceType == '1' && endType == '1') || config_->maxInternalNeurons_ == 0)
