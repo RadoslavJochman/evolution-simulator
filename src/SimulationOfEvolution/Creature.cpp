@@ -2,7 +2,7 @@
 #include "utilites.h"
 #include <ranges>
 
-Creature::Creature(std::pair<std::size_t, std::size_t>&& pos, const Config& config, Environment& myEnv)
+Creature::Creature(std::pair<int,int>&& pos, const Config* config, Environment* myEnv)
 	:
 	myEnv_(myEnv),
 	config_(config),
@@ -11,8 +11,15 @@ Creature::Creature(std::pair<std::size_t, std::size_t>&& pos, const Config& conf
 
 {
 	createGenome();
-	buildBrain();
 }
+
+Creature::Creature()
+	:
+	myEnv_(nullptr),
+	config_(nullptr),
+	pos_({ 0,0 }),
+	direction_({ 1,0 })
+{}
 
 void Creature::step()
 {
@@ -26,9 +33,9 @@ void Creature::moveRight(const std::pair<int, int>& direction)
 {
 	direction_ = swapPairValues(direction_) * direction;
 	std::pair<int, int> new_pos = pos_ + direction_;
-	if (myEnv_.isFree(new_pos.first, new_pos.second))
+	if (myEnv_->isFree(new_pos.first, new_pos.second))
 	{
-		myEnv_.moveCreature(pos_.first, pos_.second, new_pos.first, new_pos.second);
+		myEnv_->moveCreature(pos_.first, pos_.second, new_pos.first, new_pos.second);
 		pos_ = new_pos;
 	}
 }
@@ -37,9 +44,9 @@ void Creature::moveForward(const std::pair<int, int>& direction)
 {
 	direction_ = direction_ * direction;
 	std::pair<int, int> new_pos = pos_ + direction_;
-	if (myEnv_.isFree(new_pos.first, new_pos.second))
+	if (myEnv_->isFree(new_pos.first, new_pos.second))
 	{
-		myEnv_.moveCreature(pos_.first, pos_.second, new_pos.first, new_pos.second);
+		myEnv_->moveCreature(pos_.first, pos_.second, new_pos.first, new_pos.second);
 		pos_ = new_pos;
 	}
 }
@@ -48,9 +55,9 @@ void Creature::updatePosition(const std::pair<int, int>& direction)
 {
 	
 	std::pair<int, int> new_pos = pos_ + direction;
-	if (myEnv_.isFree(new_pos.first, new_pos.second))
+	if (myEnv_->isFree(new_pos.first, new_pos.second))
 	{
-		myEnv_.moveCreature(pos_.first, pos_.second, new_pos.first, new_pos.second);
+		myEnv_->moveCreature(pos_.first, pos_.second, new_pos.first, new_pos.second);
 		pos_ = new_pos;
 	}
 }
@@ -66,7 +73,7 @@ void Creature::createGenome()
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> dis(0, 15);
 
-	for (auto&& i : std::ranges::iota_view<std::size_t, std::size_t>(0, config_.numGenes_))
+	for (auto&& i : std::ranges::iota_view<std::size_t, std::size_t>(0, config_->numGenes_))
 	{
 		std::stringstream gene;
 		for (auto&& j : std::ranges::iota_view(0, 8))
@@ -89,10 +96,10 @@ void Creature::buildBrain()
 		int sourceID;
 		int endID;
 		int weight = 1;//std::stoi(binGenome.substr(16, 32), nullptr, 2);
-		if (sourceType == '0')
+		if (sourceType == '0' || (sourceType == '1' && endType == '1') || config_->maxInternalNeurons_ == 0)
 		{
-			sourceID = std::stoi(binGenome.substr(1, 8), nullptr, 2) % config_.activeSensorNeurons_.size();
-			SensorNeuronTypes neuronType = config_.activeSensorNeurons_[sourceID];
+			sourceID = std::stoi(binGenome.substr(1, 8), nullptr, 2) % config_->activeSensorNeurons_.size();
+			SensorNeuronTypes neuronType = config_->activeSensorNeurons_[sourceID];
 			if (sensorBrain_.find(neuronType) == sensorBrain_.end())
 			{
 				addSensorNeuron(neuronType);
@@ -100,16 +107,16 @@ void Creature::buildBrain()
 		}
 		else
 		{
-			sourceID = std::stoi(binGenome.substr(1, 8), nullptr, 2) % (config_.maxInternalNeurons_);
+			sourceID = std::stoi(binGenome.substr(1, 8), nullptr, 2) % (config_->maxInternalNeurons_);
 			if (internalBrain_.find(sourceID) == internalBrain_.end())
 			{
 				internalBrain_.insert(std::make_pair(sourceID, InternalNeuron()));
 			}
 		}
-		if (endType == '0')
+		if (endType == '0' || (sourceType == '1' && endType == '1') || config_->maxInternalNeurons_ == 0)
 		{
-			endID = std::stoi(binGenome.substr(9, 16), nullptr, 2) % config_.activeActionNeurons_.size();
-			ActionNeuronTypes neuronType = config_.activeActionNeurons_[endID];
+			endID = std::stoi(binGenome.substr(9, 16), nullptr, 2) % config_->activeActionNeurons_.size();
+			ActionNeuronTypes neuronType = config_->activeActionNeurons_[endID];
 			if (actionBrain_.find(neuronType) == actionBrain_.end())
 			{
 				addActionNeuron(neuronType);
@@ -117,11 +124,13 @@ void Creature::buildBrain()
 		}
 		else
 		{
-			endID = std::stoi(binGenome.substr(1, 8), nullptr, 2) % config_.maxInternalNeurons_;
+			endID = std::stoi(binGenome.substr(1, 8), nullptr, 2) % config_->maxInternalNeurons_;
+
 			if (internalBrain_.find(endID) == internalBrain_.end())
 			{
 				internalBrain_.insert(std::make_pair(endID, InternalNeuron()));
 			}
+
 		}
 
 		createConnection(sourceType, endType, sourceID, endID, weight);
@@ -130,16 +139,17 @@ void Creature::buildBrain()
 
 void Creature::createConnection(char sourceType, char endType, int sourceID, int endID, int weight)
 {
-	if (sourceType == '0' || (sourceType==1 && endType==1))								//we dont allow connection between 2 internal neurons
+	if (sourceType == '0' || (sourceType == '1' && endType == '1') || config_->maxInternalNeurons_ == 0)
 	{
-		SensorNeuronTypes sourceNeuronType = config_.activeSensorNeurons_[sourceID];
+		SensorNeuronTypes sourceNeuronType = config_->activeSensorNeurons_[sourceID];
 		SensorNeuron* source = sensorBrain_.find(sourceNeuronType)->second.get();
-		if (endType == '0')
+		if (endType == '0' || (sourceType == '1' && endType == '1') || config_->maxInternalNeurons_ == 0)
 		{
 
-			ActionNeuronTypes endNeuronType = config_.activeActionNeurons_[endID];
+			ActionNeuronTypes endNeuronType = config_->activeActionNeurons_[endID];
 			ActionNeuron* end = actionBrain_.find(endNeuronType)->second.get();
 			end->createConnection(weight, source);
+			
 		}
 		else
 		{
@@ -152,7 +162,7 @@ void Creature::createConnection(char sourceType, char endType, int sourceID, int
 		InternalNeuron* source = &(internalBrain_.find(sourceID)->second);
 		if (endType == '0')
 		{
-			ActionNeuronTypes endNeuronType = config_.activeActionNeurons_[endID];
+			ActionNeuronTypes endNeuronType = config_->activeActionNeurons_[endID];
 			ActionNeuron* end = actionBrain_.find(endNeuronType)->second.get();
 			end->createConnection(weight, source);
 		}

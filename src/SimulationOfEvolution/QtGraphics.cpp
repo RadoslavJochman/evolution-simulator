@@ -4,7 +4,7 @@ GridWidget::GridWidget(Config&& config, QWidget* parent)
     : 
     QWidget(parent),
     config_(std::move(config)),
-    myEnv_(config_),
+    myEnv_(&config_),
     timer_(this)
 {
     setFixedSize(800, 800);
@@ -17,7 +17,7 @@ GridWidget::GridWidget()
     :
     QWidget(nullptr),
     config_(),
-    myEnv_(config_),
+    myEnv_(&config_),
     frameCount_(0)
 {
 }
@@ -25,7 +25,7 @@ GridWidget::GridWidget()
 void GridWidget::startAnimation() {
     frameCount_ = 0;
     circles_.clear();
-    timer_.start(1000 / 60);
+    timer_.start(1000 / 10);
 }
 
 void GridWidget::updateFrame() 
