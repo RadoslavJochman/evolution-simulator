@@ -22,6 +22,7 @@ public:
 	void step();
 	void newGeneration(double mutationRate);
 	void killCreatures();
+	const std::vector<std::vector<Creature*>>* getHabitat() const;
 private:
 	const Config* config_;
 	std::size_t numCreatures_;

@@ -56,6 +56,22 @@ float LyNeuron::getActivation()
 	return owner_->getPosition().second * (1.0f / owner_->config_->envSize_);
 }
 
+float DensNeuron::getActivation()
+{
+	float activation = 0;
+	auto [x_pos, y_pos] = owner_->getPosition();
+	for (auto x : std::views::iota(std::max(0, (int)(x_pos - 2)), std::min((int)owner_->config_->envSize_, (int)(x_pos + 2))))
+	{
+		for (auto y : std::views::iota(std::max(0, (int)(y_pos - 2)), std::min((int)owner_->config_->envSize_, (int)(y_pos + 2))))
+		{
+			if (owner_->getEnv()->getHabitat()->at(x).at(y) != nullptr)
+			{
+				activation += 1;
+			}
+		}
+	}
+	return activation / 25;
+}
 
 double ActionNeuron::getActivation()
 {

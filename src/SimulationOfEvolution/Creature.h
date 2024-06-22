@@ -40,6 +40,7 @@ public:
 	const Config* config_;
 	Creature breed(const Creature& c1, std::pair<int, int>&& pos);
 	void mutate();
+	const Environment* getEnv()const;
 private:
 	bool killed;
 	Environment* myEnv_;

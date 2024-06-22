@@ -120,6 +120,11 @@ void Environment::killCreatures()
 	}
 }
 
+const std::vector<std::vector<Creature*>>* Environment::getHabitat() const
+{
+	return &habitat_;
+}
+
 void Environment::killSquare(std::size_t size)
 {
 	for (auto&& creature : creatures_)

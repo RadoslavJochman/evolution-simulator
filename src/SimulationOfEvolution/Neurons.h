@@ -114,6 +114,17 @@ private:
 	const Creature* owner_;
 };
 
+class DensNeuron : public SensorNeuron
+{
+public:
+	float getActivation() override;
+	DensNeuron(const Creature* owner)
+		:
+		owner_(owner)
+	{}
+private:
+	const Creature* owner_;
+};
 
 class MFRNeuron : public ActionNeuron
 {

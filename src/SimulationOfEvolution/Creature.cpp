@@ -234,6 +234,11 @@ void Creature::mutate()
 	genome_[geneIndex][baseIndex] = hexDigits[newBaseIndex];
 }
 
+const Environment* Creature::getEnv() const
+{
+	return myEnv_;
+}
+
 void Creature::addSensorNeuron(SensorNeuronTypes type)
 {
 	switch (type)
