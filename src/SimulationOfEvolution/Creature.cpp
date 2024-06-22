@@ -8,7 +8,7 @@ Creature::Creature(std::pair<int,int>&& pos, const Config* config, Environment* 
 	killed(false),
 	myEnv_(myEnv),
 	pos_(std::move(pos)),
-	direction_({ 1,0 })
+	direction_(generateRandomDirection())
 
 {
 	createGenome();
