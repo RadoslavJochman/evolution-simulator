@@ -70,30 +70,33 @@ void Environment::newGeneration(double mutationRate)
 	creatures_.erase(std::remove_if(creatures_.begin(), creatures_.end(), [](Creature& x) {
 		return x.isKilled();
 		}), creatures_.end());
-	std::uniform_int_distribution<> dis(0, creatures_.size()-1);
-	for (int i = 0; i < config_->envSize_; ++i)
+	if (creatures_.size() != 0)
 	{
-		habitat_[i].resize(config_->envSize_, nullptr);
-	}
-	auto iotaRange = std::views::iota(0, static_cast<int>(pow(config_->envSize_, 2)));
-	std::vector<int> positions(std::ranges::begin(iotaRange), std::ranges::end(iotaRange));
-	std::shuffle(positions.begin(), positions.end(), gen);
-	for (int i : positions | std::views::take(config_->numCreatures_))
-	{
-		auto pos = std::div(i, config_->envSize_);
-		int firstCreatureIndex = dis(gen);
-		int secondCreatureIndex = dis(gen);
-		newGen.push_back(creatures_[firstCreatureIndex].breed(creatures_[secondCreatureIndex], { pos.rem,pos.quot }));
-	}
-	creatures_=std::move(newGen);
-	std::uniform_real_distribution mutRate;
-	for (auto&& creature : creatures_)
-	{
-		if (mutRate(gen) > mutationRate)
+		std::uniform_int_distribution<> dis(0, creatures_.size() - 1);
+		for (int i = 0; i < config_->envSize_; ++i)
 		{
-			creature.mutate();
+			habitat_[i].resize(config_->envSize_, nullptr);
 		}
-		creature.buildBrain();
+		auto iotaRange = std::views::iota(0, static_cast<int>(pow(config_->envSize_, 2)));
+		std::vector<int> positions(std::ranges::begin(iotaRange), std::ranges::end(iotaRange));
+		std::shuffle(positions.begin(), positions.end(), gen);
+		for (int i : positions | std::views::take(config_->numCreatures_))
+		{
+			auto pos = std::div(i, config_->envSize_);
+			int firstCreatureIndex = dis(gen);
+			int secondCreatureIndex = dis(gen);
+			newGen.push_back(creatures_[firstCreatureIndex].breed(creatures_[secondCreatureIndex], { pos.rem,pos.quot }));
+		}
+		creatures_ = std::move(newGen);
+		std::uniform_real_distribution mutRate;
+		for (auto&& creature : creatures_)
+		{
+			if (mutRate(gen) > mutationRate)
+			{
+				creature.mutate();
+			}
+			creature.buildBrain();
+		}
 	}
 }
 
@@ -156,15 +159,14 @@ void Environment::killSouth(std::size_t size)
 
 void Environment::killDense(std::size_t size)
 {
-	int hlafSize = size / 2;
 	for (auto&& creature : creatures_)
 	{
 		if (!creature.isKilled())
 		{
 			auto [x_pos, y_pos] = creature.getPosition();
-			for (auto x : std::views::iota(std::max(0, (int)(x_pos - hlafSize)), std::min((int)config_->envSize_, (int)(x_pos + hlafSize))))
+			for (auto x : std::views::iota(std::max(0, (int)(x_pos - size)), std::min((int)config_->envSize_, (int)(x_pos + size))))
 			{
-				for (auto y : std::views::iota(std::max(0, (int)(y_pos - hlafSize)), std::min((int)config_->envSize_, (int)(y_pos + hlafSize))))
+				for (auto y : std::views::iota(std::max(0, (int)(y_pos - size)), std::min((int)config_->envSize_, (int)(y_pos + size))))
 				{
 					if (habitat_[x][y] != nullptr)
 					{
