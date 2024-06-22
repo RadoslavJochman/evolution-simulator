@@ -28,5 +28,8 @@ private:
 	std::vector<Creature> creatures_;
 	std::vector<std::vector<Creature*>> habitat_;
 	void killSquare(std::size_t size);
+	void killWest(std::size_t size);
+	void killSouth(std::size_t size);
+	void killDense(std::size_t size);
 };
 #endif

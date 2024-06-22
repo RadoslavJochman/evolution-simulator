@@ -60,18 +60,6 @@ void Environment::step()
 	}
 }
 
-void Environment::killSquare(std::size_t size)
-{
-	for (auto&& creature : creatures_)
-	{
-		auto [x,y] = creature.getPosition();
-		int survivalLimit = (config_->envSize_ - size) / 2;
-		if (x > survivalLimit && x < config_->envSize_ - survivalLimit && y > survivalLimit && y < config_->envSize_ - survivalLimit)
-		{
-			creature.die();
-		}
-	}
-}
 
 void Environment::newGeneration(double mutationRate)
 {
@@ -115,6 +103,77 @@ void Environment::killCreatures()
 	{
 		killSquare(config_->killZoneSize_);
 	}
+	else if (config_->envType_ == "West Killzone")
+	{
+		killWest(config_->killZoneSize_);
+	}
+	else if (config_->envType_ == "South Killzone")
+	{
+		killSouth(config_->killZoneSize_);
+	}
+	else if (config_->envType_ == "Dense Killzone")
+	{
+		killDense(config_->killZoneSize_);
+	}
 }
 
+void Environment::killSquare(std::size_t size)
+{
+	for (auto&& creature : creatures_)
+	{
+		auto [x, y] = creature.getPosition();
+		int survivalLimit = (config_->envSize_ - size) / 2;
+		if (x > survivalLimit && x < config_->envSize_ - survivalLimit && y > survivalLimit && y < config_->envSize_ - survivalLimit)
+		{
+			creature.die();
+		}
+	}
+}
+
+void Environment::killWest(std::size_t size)
+{
+	for (auto&& creature : creatures_)
+	{
+		auto x = creature.getPosition().first;
+		if (x < size)
+		{
+			creature.die();
+		}
+	}
+}
+
+void Environment::killSouth(std::size_t size)
+{
+	for (auto&& creature : creatures_)
+	{
+		auto y = creature.getPosition().second;
+		if (y < size)
+		{
+			creature.die();
+		}
+	}
+}
+
+void Environment::killDense(std::size_t size)
+{
+	int hlafSize = size / 2;
+	for (auto&& creature : creatures_)
+	{
+		if (!creature.isKilled())
+		{
+			auto [x_pos, y_pos] = creature.getPosition();
+			for (auto x : std::views::iota(std::max(0, (int)(x_pos - hlafSize)), std::min((int)config_->envSize_, (int)(x_pos + hlafSize))))
+			{
+				for (auto y : std::views::iota(std::max(0, (int)(y_pos - hlafSize)), std::min((int)config_->envSize_, (int)(y_pos + hlafSize))))
+				{
+					if (habitat_[x][y] != nullptr)
+					{
+						creature.die();
+						habitat_[x][y]->die();
+					}
+				}
+			}
+		}
+	}
+}
 
