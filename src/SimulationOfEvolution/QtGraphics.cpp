@@ -40,7 +40,7 @@ void GridWidget::updateFrame()
         if (frameCount_ >= config_.numSteps_) 
         {
             myEnv_.killCreatures();
-            myEnv_.newGeneration(0.1);
+            myEnv_.newGeneration(0.9);
             circleColors_.clear();
             generateColors();
             frameCount_ = 0;

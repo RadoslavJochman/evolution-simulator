@@ -51,7 +51,7 @@ private:
 	std::pair<int, int> direction_;
 	void createGenome();
 	void addSensorNeuron(SensorNeuronTypes type);
-	void addActionNeuron(ActionNeuronTypes type);
+	void addActionNeuron(ActionNeuronTypes type, int activationThreshold);
 	void createConnection(char sourceType, char endType, int sourceID, int endID, int weight);
 
 };

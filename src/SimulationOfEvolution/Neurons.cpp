@@ -96,7 +96,7 @@ void ActionNeuron::createConnection(double weight, SensorNeuron* source)
 //Kills creature infront
 void KillNeuron::step()
 {
-	if (std::fabs(getActivation()) >= activationTreshold_)
+	if (std::fabs(getActivation()) >= activationThreshold_)
 	{
 
 	}
@@ -106,7 +106,7 @@ void KillNeuron::step()
 void MyNeuron::step()
 {
 	double activation = getActivation();
-	if (std::fabs(activation) >= activationTreshold_)
+	if (std::fabs(activation) >= activationThreshold_)
 	{
 		if (activation > 0)
 		{
@@ -124,7 +124,7 @@ void MyNeuron::step()
 void MxNeuron::step()
 {
 	double activation = getActivation();
-	if (std::fabs(activation) >= activationTreshold_)
+	if (std::fabs(activation) >= activationThreshold_)
 	{
 		if (activation > 0)
 		{
@@ -142,7 +142,7 @@ void MxNeuron::step()
 void MRLNeuron::step()
 {
 	double activation = getActivation();
-	if (std::fabs(activation) >= activationTreshold_)
+	if (std::fabs(activation) >= activationThreshold_)
 	{
 		if (activation > 0)
 		{
@@ -158,7 +158,7 @@ void MRLNeuron::step()
 //Moves in random direction
 void MrnNeuron::step()
 {
-	if (std::fabs(getActivation()) >= activationTreshold_)
+	if (std::fabs(getActivation()) >= activationThreshold_)
 	{
 		owner_->updatePosition(generateRandomDirection());
 	}
@@ -168,7 +168,7 @@ void MrnNeuron::step()
 void MFRNeuron::step()
 {
 	double activation = getActivation();
-	if (std::fabs(activation) >= activationTreshold_)
+	if (std::fabs(activation) >= activationThreshold_)
 	{
 		if (activation > 0)
 		{

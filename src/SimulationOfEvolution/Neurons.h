@@ -39,14 +39,14 @@ public:
 	ActionNeuron(Creature* owner, double activationTreshold)
 		:
 		owner_(owner),
-		activationTreshold_(activationTreshold) {}
+		activationThreshold_(activationTreshold) {}
 protected:
 	Creature* owner_;
 	std::vector<InternalNeuron*> interInputs_;
 	std::vector<SensorNeuron*> sensorInputs_;
 	std::vector<int> sensorWeights_;
 	std::vector<int> interWeights_;
-	double activationTreshold_;
+	double activationThreshold_;
 	double getActivation();
 };
 

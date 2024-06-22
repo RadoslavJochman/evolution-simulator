@@ -107,7 +107,8 @@ void Creature::buildBrain()
 		char endType = binGenome[8];
 		int sourceID;
 		int endID;
-		int weight = 1;//std::stoi(binGenome.substr(16, 32), nullptr, 2);
+		int weight = std::stoi(binGenome.substr(16, 23), nullptr, 2);
+		int activationThreshold = std::stoi(binGenome.substr(24, 31), nullptr, 2);
 		if (sourceType == '0' || (sourceType == '1' && endType == '1') || config_->maxInternalNeurons_ == 0)
 		{
 			sourceID = std::stoi(binGenome.substr(1, 8), nullptr, 2) % config_->activeSensorNeurons_.size();
@@ -131,7 +132,7 @@ void Creature::buildBrain()
 			ActionNeuronTypes neuronType = config_->activeActionNeurons_[endID];
 			if (actionBrain_.find(neuronType) == actionBrain_.end())
 			{
-				addActionNeuron(neuronType);
+				addActionNeuron(neuronType, activationThreshold);
 			}
 		}
 		else
@@ -282,38 +283,38 @@ void Creature::addSensorNeuron(SensorNeuronTypes type)
 	}
 }
 
-void Creature::addActionNeuron(ActionNeuronTypes type)
+void Creature::addActionNeuron(ActionNeuronTypes type, int activationThreshold)
 {
 	switch (type)
 	{
 	case ActionNeuronTypes::MFR:
 	{
-		actionBrain_.insert(std::make_pair(type, std::make_unique<MFRNeuron>(this,0.8)));
+		actionBrain_.insert(std::make_pair(type, std::make_unique<MFRNeuron>(this, activationThreshold)));
 		break;
 	}
 	case ActionNeuronTypes::Mrn:
 	{
-		actionBrain_.insert(std::make_pair(type, std::make_unique<MrnNeuron>(this, 0.8)));
+		actionBrain_.insert(std::make_pair(type, std::make_unique<MrnNeuron>(this, activationThreshold)));
 		break;
 	}
 	case ActionNeuronTypes::MRL:
 	{
-		actionBrain_.insert(std::make_pair(type, std::make_unique<MRLNeuron>(this, 0.8)));
+		actionBrain_.insert(std::make_pair(type, std::make_unique<MRLNeuron>(this, activationThreshold)));
 		break;
 	}
 	case ActionNeuronTypes::Mx:
 	{
-		actionBrain_.insert(std::make_pair(type, std::make_unique<MxNeuron>(this, 0.8)));
+		actionBrain_.insert(std::make_pair(type, std::make_unique<MxNeuron>(this, activationThreshold)));
 		break;
 	}
 	case ActionNeuronTypes::My:
 	{
-		actionBrain_.insert(std::make_pair(type, std::make_unique<MyNeuron>(this, 0.8)));
+		actionBrain_.insert(std::make_pair(type, std::make_unique<MyNeuron>(this, activationThreshold)));
 		break;
 	}
 	case ActionNeuronTypes::Kill:
 	{
-		actionBrain_.insert(std::make_pair(type, std::make_unique<KillNeuron>(this, 0.8)));
+		actionBrain_.insert(std::make_pair(type, std::make_unique<KillNeuron>(this, activationThreshold)));
 		break;
 	}
 	default:
