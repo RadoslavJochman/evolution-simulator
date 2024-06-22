@@ -68,6 +68,10 @@ float DensNeuron::getActivation()
 			{
 				activation += 1;
 			}
+			else
+			{
+				activation -= 1;
+			}
 		}
 	}
 	return activation / 25;
