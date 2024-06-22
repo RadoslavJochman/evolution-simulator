@@ -12,11 +12,19 @@ if(CMAKE_HOST_WIN32)
   set(OBJECT_NAME_MAX 255)
 endif()
 
+
+
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 qt_standard_project_setup()
 
 qt_add_executable(${PROJECT_NAME} "Main.cpp" "Neurons.h" "Neurons.cpp" "utilites.h" "Creature.h" "Creature.cpp" "Environment.h" "Environment.cpp" "QtGraphics.cpp" "QtGraphics.h") 
 target_link_libraries(${PROJECT_NAME} PUBLIC Qt6::Core Qt6::Gui Qt6::Widgets)
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    target_compile_options(${PROJECT_NAME} PRIVATE /W3)
+endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     file(GLOB PLUGIN_FILES "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/Debug/QT6/plugins/platforms/*")

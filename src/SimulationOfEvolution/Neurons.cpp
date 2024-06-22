@@ -1,8 +1,8 @@
 #include "Neurons.h"
 #include <ranges>
-float InternalNeuron::getActivation()
+double InternalNeuron::getActivation() const
 {
-	float activation = 0;
+	double activation = 0;
 	for (auto&& [i, j] : std::ranges::zip_view(sensorInputs_, sensorWeights_))
 	{
 		activation += i->getActivation() * j;
@@ -17,7 +17,7 @@ void InternalNeuron::createConnection(double weight, SensorNeuron* source)
 }
 
 //returns random number
-float RndNeuron::getActivation()
+double RndNeuron::getActivation() const
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -26,37 +26,37 @@ float RndNeuron::getActivation()
 }
 
 //returns distance from north/south border
-float BDyNeuron::getActivation()
+double BDyNeuron::getActivation() const
 {
 	return -1 + owner_->getPosition().second * (2.0f / owner_->config_->envSize_);
 }
 
 //returns distance from east/west border
-float BDxNeuron::getActivation()
+double BDxNeuron::getActivation() const
 {
 	return -1 + owner_->getPosition().first * (2.0f / owner_->config_->envSize_);
 }
 
 //returns neares border distance
-float BDNeuron::getActivation()
+double BDNeuron::getActivation() const
 {
 	return std::min(std::fabs(-1 + owner_->getPosition().first * (2.0f / owner_->config_->envSize_)),
 							  -1 + owner_->getPosition().second * (2.0f / owner_->config_->envSize_));
 }
 
 //returns x location
-float LxNeuron::getActivation()
+double LxNeuron::getActivation() const
 {
 	return owner_->getPosition().first * (1.0f / owner_->config_->envSize_);
 }
 
 //returns y location
-float LyNeuron::getActivation()
+double LyNeuron::getActivation() const
 {
 	return owner_->getPosition().second * (1.0f / owner_->config_->envSize_);
 }
 
-float DensNeuron::getActivation()
+double DensNeuron::getActivation() const
 {
 	float activation = 0;
 	auto [x_pos, y_pos] = owner_->getPosition();
@@ -77,7 +77,7 @@ float DensNeuron::getActivation()
 	return activation / 25;
 }
 
-double ActionNeuron::getActivation()
+double ActionNeuron::getActivation()const
 {
 	double activation = 0;
 	for (const auto& [interNeuron, interWeight] : std::ranges::zip_view(interInputs_, interWeights_))
@@ -91,13 +91,13 @@ double ActionNeuron::getActivation()
 	return activation;
 }
 
-void ActionNeuron::createConnection(double weight, InternalNeuron* source)
+void ActionNeuron::createConnection(int weight, InternalNeuron* source)
 {
 	interInputs_.push_back(source);
 	interWeights_.push_back(weight);
 }
 
-void ActionNeuron::createConnection(double weight, SensorNeuron* source)
+void ActionNeuron::createConnection(int weight, SensorNeuron* source)
 {
 	sensorInputs_.push_back(source);
 	sensorWeights_.push_back(weight);

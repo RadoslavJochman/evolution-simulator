@@ -114,7 +114,8 @@ struct Config
         activeActionNeurons_(),
         numGenes_(0),
         numGenerations_(0),
-        numSteps_(0)
+        numSteps_(0),
+        killZoneSize_(0)
 
     {}
 

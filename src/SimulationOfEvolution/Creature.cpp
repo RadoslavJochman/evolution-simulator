@@ -74,7 +74,7 @@ void Creature::updatePosition(const std::pair<int, int>& direction)
 	}
 }
 
-const std::pair<std::size_t, std::size_t>& Creature::getPosition() const
+const std::pair<int, int>& Creature::getPosition() const
 {
 	return pos_;
 }
@@ -107,8 +107,8 @@ void Creature::buildBrain()
 		char endType = binGenome[8];
 		int sourceID;
 		int endID;
-		double weight = std::stoi(binGenome.substr(16, 8), nullptr, 2);
-		double activationThreshold = std::stoi(binGenome.substr(24, 8), nullptr, 2);
+		int weight = std::stoi(binGenome.substr(16, 8), nullptr, 2);
+		int activationThreshold = std::stoi(binGenome.substr(24, 8), nullptr, 2);
 		if (sourceType == '0' || (sourceType == '1' && endType == '1') || config_->maxInternalNeurons_ == 0)
 		{
 			sourceID = std::stoi(binGenome.substr(1, 8), nullptr, 2) % config_->activeSensorNeurons_.size();
@@ -172,7 +172,7 @@ void Creature::die()
 	killed = true;
 }
 
-bool Creature::isKilled()
+bool Creature::isKilled() const
 {
 	return killed;
 }

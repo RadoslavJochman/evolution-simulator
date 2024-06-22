@@ -14,26 +14,26 @@ class Creature;
 class SensorNeuron
 {
 public:
-	virtual float getActivation() = 0;
+	virtual double getActivation() const = 0;
 };
 
 class InternalNeuron
 {
 public:
-	float getActivation();
+	double getActivation() const;
 	void createConnection(double weight, SensorNeuron* source);
 protected:
 	std::vector<SensorNeuron*> sensorInputs_;
-	std::vector<int> sensorWeights_;
+	std::vector<double> sensorWeights_;
 };
 
 class ActionNeuron
 {
 public:
 	virtual void step() = 0;
-	void createConnection(double weight, InternalNeuron* source);
-	void createConnection(double weight, SensorNeuron* source);
-	ActionNeuron(Creature* owner, double activationTreshold)
+	void createConnection(int weight, InternalNeuron* source);
+	void createConnection(int weight, SensorNeuron* source);
+	ActionNeuron(Creature* owner, int activationTreshold)
 		:
 		owner_(owner),
 		activationThreshold_(activationTreshold) {}
@@ -41,23 +41,23 @@ protected:
 	Creature* owner_;
 	std::vector<InternalNeuron*> interInputs_;
 	std::vector<SensorNeuron*> sensorInputs_;
-	std::vector<int> sensorWeights_;
-	std::vector<int> interWeights_;
-	double activationThreshold_;
-	double getActivation();
+	std::vector<double> sensorWeights_;
+	std::vector<double> interWeights_;
+	int activationThreshold_;
+	double getActivation() const;
 };
 
 
 class RndNeuron : public SensorNeuron
 {
 public:
-	float getActivation() override;
+	double getActivation() const override;
 };
 
 class BDyNeuron : public SensorNeuron
 {
 public:
-	float getActivation() override;
+	double getActivation() const override;
 	BDyNeuron(const Creature* owner)
 		:
 		owner_(owner)
@@ -69,7 +69,7 @@ private:
 class BDxNeuron : public SensorNeuron
 {
 public:
-	float getActivation() override;
+	double getActivation() const override;
 	BDxNeuron(const Creature* owner)
 		:
 		owner_(owner)
@@ -81,7 +81,7 @@ private:
 class BDNeuron : public SensorNeuron
 {
 public:
-	float getActivation() override;
+	double getActivation() const override;
 	BDNeuron(const Creature* owner)
 		:
 		owner_(owner)
@@ -93,7 +93,7 @@ private:
 class LxNeuron : public SensorNeuron
 {
 public:
-	float getActivation() override;
+	double getActivation() const override;
 	LxNeuron(const Creature* owner)
 		:
 		owner_(owner)
@@ -105,7 +105,7 @@ private:
 class LyNeuron : public SensorNeuron
 {
 public:
-	float getActivation() override;
+	double getActivation() const override;
 	LyNeuron(const Creature* owner)
 		:
 		owner_(owner)
@@ -117,7 +117,7 @@ private:
 class DensNeuron : public SensorNeuron
 {
 public:
-	float getActivation() override;
+	double getActivation() const override;
 	DensNeuron(const Creature* owner)
 		:
 		owner_(owner)
@@ -129,7 +129,7 @@ private:
 class MFRNeuron : public ActionNeuron
 {
 public:
-	MFRNeuron(Creature* owner, double activationTreshold)
+	MFRNeuron(Creature* owner, int activationTreshold)
 		: ActionNeuron(owner, activationTreshold) {}
 	void step() override;
 };
@@ -137,7 +137,7 @@ public:
 class MrnNeuron : public ActionNeuron
 {
 public:
-	MrnNeuron(Creature* owner, double activationTreshold)
+	MrnNeuron(Creature* owner, int activationTreshold)
 		: ActionNeuron(owner, activationTreshold) {}
 	void step() override;
 };
@@ -145,7 +145,7 @@ public:
 class MRLNeuron : public ActionNeuron
 {
 public:
-	MRLNeuron(Creature* owner, double activationTreshold)
+	MRLNeuron(Creature* owner, int activationTreshold)
 		: ActionNeuron(owner, activationTreshold) {}
 	void step() override;
 };
@@ -153,7 +153,7 @@ public:
 class MxNeuron : public ActionNeuron
 {
 public:
-	MxNeuron(Creature* owner, double activationTreshold)
+	MxNeuron(Creature* owner, int activationTreshold)
 		: ActionNeuron(owner, activationTreshold) {}
 	void step() override;
 };
@@ -161,7 +161,7 @@ public:
 class MyNeuron : public ActionNeuron
 {
 public:
-	MyNeuron(Creature* owner, double activationTreshold)
+	MyNeuron(Creature* owner, int activationTreshold)
 		: ActionNeuron(owner, activationTreshold) {}
 	void step() override;
 };
@@ -169,7 +169,7 @@ public:
 class KillNeuron : public ActionNeuron
 {
 public:
-	KillNeuron(Creature* owner, double activationTreshold)
+	KillNeuron(Creature* owner, int activationTreshold)
 		: ActionNeuron(owner, activationTreshold) {}
 	void step() override;
 };

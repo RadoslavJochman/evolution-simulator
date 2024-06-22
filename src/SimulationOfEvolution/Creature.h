@@ -32,15 +32,15 @@ public:
 	void moveRight(const std::pair<int, int>& direction);
 	void moveForward(const std::pair<int, int>& direction);
 	void updatePosition(const std::pair<int, int>& direction);
-	const std::pair<std::size_t, std::size_t>& getPosition() const;
+	const std::pair<int, int>& getPosition() const;
 	void buildBrain();
 	const std::array<int,3> getColor() const;
 	void die();
-	bool isKilled();
+	bool isKilled() const;
 	const Config* config_;
 	Creature breed(const Creature& c1, std::pair<int, int>&& pos);
 	void mutate();
-	const Environment* getEnv()const;
+	const Environment* getEnv() const;
 private:
 	bool killed;
 	Environment* myEnv_;

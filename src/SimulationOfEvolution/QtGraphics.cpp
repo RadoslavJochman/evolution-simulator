@@ -148,7 +148,7 @@ void DialogWindow::handleOkButtonClicked()
     bool sizeOk, killZoneSizeOk, numCreaturesOk, maxInternalNeuronsOk, numGenesOk, numGenerationsOk, numStepsOk;
     std::size_t envSize = envSizeEdit_.text().toInt(&sizeOk);
     std::string envType = envTypeBox_.currentText().toStdString();
-    std::size_t killZoneSize = killZoneSizeEdit_.text().toInt();
+    std::size_t killZoneSize = killZoneSizeEdit_.text().toInt(&killZoneSizeOk);
     std::size_t numCreatures = numCreaturesEdit_.text().toInt(&numCreaturesOk);
     std::size_t maxInternalNeurons = maxInternalNeuronsEdit_.text().toInt(&maxInternalNeuronsOk);
     std::size_t numGenes = numGenesEdit_.text().toInt(&numGenesOk);
@@ -162,7 +162,7 @@ void DialogWindow::handleOkButtonClicked()
     }
     std::size_t numGenerations = numGenerationsEdit_.text().toInt(&numGenerationsOk);
     std::size_t numSteps = numStepsEdit_.text().toInt(&numStepsOk);
-    if (sizeOk && numCreaturesOk && maxInternalNeuronsOk && numGenesOk && numGenerationsOk && numStepsOk)
+    if (sizeOk && numCreaturesOk && maxInternalNeuronsOk && numGenesOk && numGenerationsOk && numStepsOk && killZoneSizeOk)
     {
         Config config(envSize, envType, numCreatures, maxInternalNeurons, std::move(activeSensorNeurons), std::move(activeActionNeurons), numGenes, numGenerations, numSteps, killZoneSize);
         emit dialogSelected(config);
