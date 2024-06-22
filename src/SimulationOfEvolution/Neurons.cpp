@@ -7,17 +7,7 @@ float InternalNeuron::getActivation()
 	{
 		activation += i->getActivation() * j;
 	}
-	for (auto&& [i, j] : std::ranges::zip_view(interInputs_, interWeights_))
-	{
-		activation += i->getActivation() * j;
-	}
 	return activation;
-}
-
-void InternalNeuron::createConnection(double weight, InternalNeuron* source)
-{
-	interInputs_.push_back(source);
-	interWeights_.push_back(weight);
 }
 
 void InternalNeuron::createConnection(double weight, SensorNeuron* source)
@@ -57,13 +47,13 @@ float BDNeuron::getActivation()
 //returns x location
 float LxNeuron::getActivation()
 {
-	return owner_->getPosition().first * (2.0f / owner_->config_->envSize_);
+	return owner_->getPosition().first * (1.0f / owner_->config_->envSize_);
 }
 
 //returns y location
 float LyNeuron::getActivation()
 {
-	return owner_->getPosition().second * (2.0f / owner_->config_->envSize_);
+	return owner_->getPosition().second * (1.0f / owner_->config_->envSize_);
 }
 
 

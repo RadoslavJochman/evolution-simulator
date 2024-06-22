@@ -30,7 +30,7 @@ void GridWidget::startAnimation() {
     circleColors_.clear();
     frameCount_ = 0;
     generateColors();
-    timer_.start(1000 / 60);
+    timer_.start(1000 / 20);
 }
 
 void GridWidget::updateFrame() 

@@ -107,8 +107,8 @@ void Creature::buildBrain()
 		char endType = binGenome[8];
 		int sourceID;
 		int endID;
-		int weight = std::stoi(binGenome.substr(16, 23), nullptr, 2);
-		int activationThreshold = std::stoi(binGenome.substr(24, 31), nullptr, 2);
+		double weight = std::stoi(binGenome.substr(16, 8), nullptr, 2);
+		double activationThreshold = std::stoi(binGenome.substr(24, 8), nullptr, 2);
 		if (sourceType == '0' || (sourceType == '1' && endType == '1') || config_->maxInternalNeurons_ == 0)
 		{
 			sourceID = std::stoi(binGenome.substr(1, 8), nullptr, 2) % config_->activeSensorNeurons_.size();
@@ -200,17 +200,9 @@ void Creature::createConnection(char sourceType, char endType, int sourceID, int
 	else
 	{
 		InternalNeuron* source = &(internalBrain_.find(sourceID)->second);
-		if (endType == '0')
-		{
-			ActionNeuronTypes endNeuronType = config_->activeActionNeurons_[endID];
-			ActionNeuron* end = actionBrain_.find(endNeuronType)->second.get();
-			end->createConnection(weight, source);
-		}
-		else
-		{
-			InternalNeuron* end = &(internalBrain_.find(endID)->second);
-			end->createConnection(weight, source);
-		}
+		ActionNeuronTypes endNeuronType = config_->activeActionNeurons_[endID];
+		ActionNeuron* end = actionBrain_.find(endNeuronType)->second.get();
+		end->createConnection(weight, source);
 	}
 }
 

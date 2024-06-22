@@ -21,13 +21,10 @@ class InternalNeuron
 {
 public:
 	float getActivation();
-	void createConnection(double weight, InternalNeuron* source);
 	void createConnection(double weight, SensorNeuron* source);
 protected:
-	std::vector<InternalNeuron*> interInputs_;
 	std::vector<SensorNeuron*> sensorInputs_;
 	std::vector<int> sensorWeights_;
-	std::vector<int> interWeights_;
 };
 
 class ActionNeuron
