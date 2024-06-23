@@ -120,16 +120,14 @@ To install and run this project, follow these steps:
 The environment type determines the specific conditions and obstacles that creatures will face. Here are the concrete environment types available in the simulation:
 
 1. **Square Environment**:
-    - A simple square grid where creatures can move freely within the bounds.
-    - No specific kill zones; creatures evolve and interact based on their neural activations.
+    - At the end of each generation all the creature in square area in the center are killed
 
 2. **West Border Environment**:
     - Creatures near the west (left) border are at higher risk.
-    - A kill zone is defined along the west edge, reducing the population near this area over time.
+    - At the end of each generation all the creature near west (left) border are killed
 
 3. **South Border Environment**:
-    - Similar to the west border environment but with a kill zone along the south (bottom) edge.
-    - Creatures near the south border are more likely to be killed.
+    - Similar to the west border environment but with a kill zone along the north (top) edge.
 
 4. **Dense Environment**:
     - High population density areas are more dangerous.
