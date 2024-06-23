@@ -104,7 +104,7 @@ void Environment::killCreatures()
 	}
 	else if (config_->envType_ == "North Killzone")
 	{
-		killSouth(config_->killZoneSize_);
+		killNorth(config_->killZoneSize_);
 	}
 	else if (config_->envType_ == "Dense Killzone")
 	{
