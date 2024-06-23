@@ -4,7 +4,6 @@
 #include <memory>
 #include <ranges>
 #include <iostream>
-#include "Creature.h"
 #include <random>
 enum class ActionNeuronTypes;
 enum class SensorNeuronTypes; 

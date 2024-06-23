@@ -77,10 +77,10 @@ void GridWidget::paintEvent(QPaintEvent* event)
     painter.setRenderHint(QPainter::Antialiasing);
 
     
-    for (auto&& [rect, color] : std::ranges::zip_view(circles_, circleColors_))
+    for (std::size_t i = 0; i<circles_.size(); i++)
     {
-        painter.setBrush(color);
-        painter.drawEllipse(rect);
+        painter.setBrush(circleColors_[i]);
+        painter.drawEllipse(circles_[i]);
     }
 }
 

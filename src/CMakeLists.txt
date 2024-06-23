@@ -21,7 +21,7 @@ qt_add_executable(${PROJECT_NAME} "Main.cpp" "Neurons.h" "Neurons.cpp" "utilitie
 target_link_libraries(${PROJECT_NAME} PUBLIC Qt6::Core Qt6::Gui Qt6::Widgets)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)
+    target_compile_options(${PROJECT_NAME} PRIVATE -Werror -Wreturn-type)
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_compile_options(${PROJECT_NAME} PRIVATE /W3)
 endif()

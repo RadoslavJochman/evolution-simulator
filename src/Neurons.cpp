@@ -1,11 +1,12 @@
 #include "Neurons.h"
+#include "Creature.h"
 #include <ranges>
 double InternalNeuron::getActivation() const
 {
 	double activation = 0;
-	for (auto&& [input, weight] : std::ranges::zip_view(sensorInputs_, sensorWeights_))
+	for (std::size_t i = 0; i<sensorInputs_.size(); i++)
 	{
-		activation += input->getActivation() * weight;
+		activation += sensorInputs_[i]->getActivation() * sensorWeights_[i];
 	}
 	return activation;
 }
@@ -76,13 +77,13 @@ double DensNeuron::getActivation() const
 double ActionNeuron::getActivation()const
 {
 	double activation = 0;
-	for (const auto& [interNeuron, interWeight] : std::ranges::zip_view(interInputs_, interWeights_))
+	for (std::size_t i = 0; i<interInputs_.size(); i++)
 	{
-		activation += interWeight * interNeuron->getActivation();
+		activation += interWeights_[i] * interInputs_[i]->getActivation();
 	}
-	for (const auto& [sensorNeuron, sensorWeight] : std::ranges::zip_view(sensorInputs_, sensorWeights_))
+	for (std::size_t i = 0; i<sensorInputs_.size(); i++)
 	{
-		activation += sensorWeight * sensorNeuron->getActivation();
+		activation += sensorWeights_[i] * sensorInputs_[i]->getActivation();
 	}
 	return activation;
 }

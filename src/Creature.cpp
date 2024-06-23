@@ -212,10 +212,10 @@ Creature Creature::breed(const Creature& c1, std::pair<int, int>&& pos)
 	std::random_device rd;
 	std::mt19937 rndGenerator(rd());
 	std::uniform_int_distribution<> dist(0, 1);
-	for (auto&& [gene1, gene2] : std::ranges::zip_view(c1.genome_, genome_))
+	for (std::size_t i = 0; i < genome_.size(); i++)
 	{
 		int randomIndex = dist(rndGenerator);
-		genome.push_back((randomIndex == 0) ? gene1 : gene2);
+		genome.push_back((randomIndex == 0) ? c1.genome_[i] : genome_[i]);
 	}
 	return Creature(std::move(pos), config_, myEnv_, std::move(genome));
 }
