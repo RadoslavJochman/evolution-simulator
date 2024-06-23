@@ -56,7 +56,7 @@ private:
 	/**
 	 * @brief Kills all creatures that are close to the top border
 	 */
-	void killSouth(std::size_t size);
+	void killNorth(std::size_t size);
 	/**
 	 * @brief Kills all creatures that are surrounded by other creature
 	 */

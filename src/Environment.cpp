@@ -102,7 +102,7 @@ void Environment::killCreatures()
 	{
 		killWest(config_->killZoneSize_);
 	}
-	else if (config_->envType_ == "South Killzone")
+	else if (config_->envType_ == "North Killzone")
 	{
 		killSouth(config_->killZoneSize_);
 	}
@@ -142,7 +142,7 @@ void Environment::killWest(std::size_t size)
 	}
 }
 
-void Environment::killSouth(std::size_t size)
+void Environment::killNorth(std::size_t size)
 {
 	for (auto&& creature : creatures_)
 	{

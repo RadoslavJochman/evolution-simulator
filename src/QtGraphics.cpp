@@ -133,7 +133,7 @@ DialogWindow::DialogWindow(QWidget* parent)
     okButton_("OK")
 
 {
-    envTypeBox_.addItems({ "Square Killzone", "West Killzone", "South Killzone", "Dense Killzone" });
+    envTypeBox_.addItems({ "Square Killzone", "West Killzone", "North Killzone", "Dense Killzone" });
 
     activeSensorNeuronsEdit_.addItems({ "Rnd", "BDy", "BDx", "BD", "Lx", "Ly", "Dens" });
     activeSensorNeuronsEdit_.setSelectionMode(QAbstractItemView::MultiSelection);
