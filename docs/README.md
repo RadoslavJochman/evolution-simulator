@@ -21,7 +21,7 @@ To install and run this project, follow these steps:
     ```bash
     mkdir build
     cd build
-    cmake ..
+    cmake ../src
     make
     ```
     The CMake configuration will automatically download and build all required dependencies.
