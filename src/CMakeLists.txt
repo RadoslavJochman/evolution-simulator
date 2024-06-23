@@ -23,7 +23,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC Qt6::Core Qt6::Gui Qt6::Widgets)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     target_compile_options(${PROJECT_NAME} PRIVATE -Werror -Wreturn-type)
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_compile_options(${PROJECT_NAME} PRIVATE /W3)
+    target_compile_options(${PROJECT_NAME} PRIVATE /W2)
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
