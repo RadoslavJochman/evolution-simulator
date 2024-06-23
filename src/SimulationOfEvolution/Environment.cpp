@@ -8,15 +8,17 @@ Environment::Environment(const Config* config)
 {
 	newGeneration();
 }
+
 bool Environment::isFree(int x, int y)
 {
 	if (x >= 0 && y >= 0 && x < config_->envSize_ && y < config_->envSize_)
 	{
-		return habitat_[x][y] == nullptr;
+		return habitat_[x][y] == nullptr || habitat_[x][y]->isKilled();
 	}
 	else return false;
 	
 }
+
 void Environment::moveCreature(std::size_t x, std::size_t y, std::size_t new_x, std::size_t new_y)
 {
 	habitat_[new_x][new_y] = habitat_[x][y];
@@ -32,19 +34,24 @@ void Environment::step()
 {
 	for (auto&& creature : creatures_)
 	{
-		creature.step();
+		if (!creature.isKilled())
+		{
+			creature.step();
+		}
+		
 	}
 }
-
 
 void Environment::newGeneration()
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::vector<Creature> oldGen = std::move(creatures_);
+	creatures_.clear();
 	oldGen.erase(std::remove_if(oldGen.begin(), oldGen.end(), [](Creature& x) {
 		return x.isKilled();
 		}), oldGen.end());
+	habitat_.clear();
 	habitat_.resize(config_->envSize_);
 	for (int i = 0; i < config_->envSize_; ++i)
 	{

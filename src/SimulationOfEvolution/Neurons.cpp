@@ -16,7 +16,6 @@ void InternalNeuron::createConnection(double weight, SensorNeuron* source)
 	sensorWeights_.push_back(weight);
 }
 
-//returns random number
 double RndNeuron::getActivation() const
 {
 	std::random_device rd;
@@ -25,36 +24,32 @@ double RndNeuron::getActivation() const
 	return dis(gen);
 }
 
-//returns distance from north/south border
 double BDyNeuron::getActivation() const
 {
 	return -1 + owner_->getPosition().second * (2.0f / owner_->config_->envSize_);
 }
 
-//returns distance from east/west border
 double BDxNeuron::getActivation() const
 {
 	return -1 + owner_->getPosition().first * (2.0f / owner_->config_->envSize_);
 }
 
-//returns neares border distance
 double BDNeuron::getActivation() const
 {
 	return std::min(std::fabs(-1 + owner_->getPosition().first * (2.0f / owner_->config_->envSize_)),
-							  -1 + owner_->getPosition().second * (2.0f / owner_->config_->envSize_));
+					std::fabs(-1 + owner_->getPosition().second * (2.0f / owner_->config_->envSize_)));
 }
 
-//returns x location
 double LxNeuron::getActivation() const
 {
 	return owner_->getPosition().first * (1.0f / owner_->config_->envSize_);
 }
 
-//returns y location
 double LyNeuron::getActivation() const
 {
 	return owner_->getPosition().second * (1.0f / owner_->config_->envSize_);
 }
+
 
 double DensNeuron::getActivation() const
 {
@@ -77,6 +72,7 @@ double DensNeuron::getActivation() const
 	return activation / 25;
 }
 
+
 double ActionNeuron::getActivation()const
 {
 	double activation = 0;
@@ -91,11 +87,13 @@ double ActionNeuron::getActivation()const
 	return activation;
 }
 
+
 void ActionNeuron::createConnection(int weight, InternalNeuron* source)
 {
 	interInputs_.push_back(source);
 	interWeights_.push_back(weight);
 }
+
 
 void ActionNeuron::createConnection(int weight, SensorNeuron* source)
 {
@@ -103,13 +101,13 @@ void ActionNeuron::createConnection(int weight, SensorNeuron* source)
 	sensorWeights_.push_back(weight);
 }
 
-//Kills creature infront
+
 void KillNeuron::step()
 {
 	if (std::fabs(getActivation()) >= activationThreshold_)
 	{
 		auto habitat = owner_->getEnv()->getHabitat();
-		auto [x, y] = owner_->getPosition()+owner_->getDrirection();
+		auto [x, y] = owner_->getPosition()+owner_->getDirection();
 		if (x < owner_->config_->envSize_ && x >= 0 && y < owner_->config_->envSize_ && y >= 0 && habitat->at(x).at(y) != nullptr)
 		{
 			habitat->at(x).at(y)->die();
@@ -117,7 +115,6 @@ void KillNeuron::step()
 	}
 }
 
-//Moves along y axis
 void MyNeuron::step()
 {
 	double activation = getActivation();
@@ -135,7 +132,6 @@ void MyNeuron::step()
 	}
 }
 
-//Moves along x axis
 void MxNeuron::step()
 {
 	double activation = getActivation();
@@ -153,7 +149,6 @@ void MxNeuron::step()
 	}
 }
 
-//Moves left/right
 void MRLNeuron::step()
 {
 	double activation = getActivation();
@@ -170,7 +165,6 @@ void MRLNeuron::step()
 	}
 }
 
-//Moves in random direction
 void MrnNeuron::step()
 {
 	if (std::fabs(getActivation()) >= activationThreshold_)
@@ -179,7 +173,6 @@ void MrnNeuron::step()
 	}
 }
 
-//Moves forwards/backwards
 void MFRNeuron::step()
 {
 	double activation = getActivation();

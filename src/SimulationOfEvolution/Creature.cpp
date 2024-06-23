@@ -1,5 +1,5 @@
 #include "Creature.h"
-#include "utilites.h"
+#include "utilities.h"
 #include <ranges>
 
 Creature::Creature(std::pair<int,int>&& pos, const Config* config, Environment* myEnv)
@@ -150,11 +150,11 @@ void Creature::buildBrain()
 	}
 }
 
-const std::array<int, 3> Creature::getColor() const
+const std::array<std::size_t, 3> Creature::getColor() const
 {
-	int r = 0;
-	int g = 0;
-	int b = 0;
+	std::size_t r = 0;
+	std::size_t g = 0;
+	std::size_t b = 0;
 	for (auto&& gene : genome_)
 	{
 		r += std::stoi(gene.substr(0, 2), nullptr, 16);
@@ -239,10 +239,11 @@ const Environment* Creature::getEnv() const
 	return myEnv_;
 }
 
-const std::pair<int, int> Creature::getDrirection() const
+const std::pair<int, int> Creature::getDirection() const
 {
 	return direction_;
 }
+
 void Creature::addSensorNeuron(SensorNeuronTypes type)
 {
 	switch (type)
