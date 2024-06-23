@@ -1,5 +1,17 @@
 #include "QtGraphics.h"
 
+/**
+ * @brief stops the application for given number of milliseconds
+ */
+void delay(int millisecondsToWait)
+{
+    QTime dieTime = QTime::currentTime().addMSecs(millisecondsToWait);
+    while (QTime::currentTime() < dieTime)
+    {
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+    }
+}
+
 GridWidget::GridWidget(Config&& config, QWidget* parent)
     : 
     QWidget(parent),
@@ -10,6 +22,7 @@ GridWidget::GridWidget(Config&& config, QWidget* parent)
     genCount_(0)
 {
     setFixedSize(800, 800);
+    generateColors();
     generateCircles();
     connect(&timer_, &QTimer::timeout, this, &GridWidget::updateFrame);
 }
@@ -40,6 +53,9 @@ void GridWidget::updateFrame()
         if (frameCount_ >= config_.numSteps_) 
         {
             myEnv_.killCreatures();
+            generateCircles();
+            update();
+            delay(3000);
             myEnv_.newGeneration();
             circleColors_.clear();
             generateColors();
@@ -59,7 +75,6 @@ void GridWidget::updateFrame()
 
 }
 
-
 void GridWidget::paintEvent(QPaintEvent* event) 
 {
     Q_UNUSED(event);
@@ -78,15 +93,22 @@ void GridWidget::paintEvent(QPaintEvent* event)
 void GridWidget::generateCircles() 
 {
     circles_.clear();
-    int cellWidth = width() / (config_.envSize_+2);
-    int cellHeight = height() / (config_.envSize_+2);
+    std::size_t cellWidth = width() / (config_.envSize_);
+    std::size_t cellHeight = height() / (config_.envSize_);
+    std::size_t counter = 0;
     for (auto&& creature : myEnv_.getCreatures()) 
     {
+        if (creature.isKilled() && (circleColors_[counter].red()!= 0 || circleColors_[counter].green() != 0 || circleColors_[counter].blue() != 0))
+        {
+            circleColors_[counter] = QColor(0, 0, 0);
+        }
+
         const std::pair<std::size_t, std::size_t>& pos = creature.getPosition();
-        int x = (pos.first+1) * cellWidth;
-        int y = (pos.second+1) * cellHeight;
+        std::size_t x = (pos.first + 1) * cellWidth;
+        std::size_t y = (pos.second + 1) * cellHeight;
         std::string hexColor;
         circles_.append(QRect(x, y, cellWidth, cellHeight));
+        counter++;
     }
 }
 
@@ -94,7 +116,7 @@ void GridWidget::generateColors()
 {
     for (auto&& creature : myEnv_.getCreatures())
     {
-        std::array<int, 3> RGBColor = creature.getColor();
+        std::array<std::size_t, 3> RGBColor = creature.getColor();
         circleColors_.append(QColor(RGBColor.at(0), RGBColor.at(1), RGBColor.at(2)));
     }
 }
@@ -119,7 +141,7 @@ DialogWindow::DialogWindow(QWidget* parent)
 {
     envTypeBox_.addItems({ "Square Killzone", "West Killzone", "South Killzone", "Dense Killzone" });
 
-    activeSensorNeuronsEdit_.addItems({ "Rnd", "BDy", "BD", "Lx", "Ly" });
+    activeSensorNeuronsEdit_.addItems({ "Rnd", "BDy", "BDx", "BD", "Lx", "Ly", "Dens" });
     activeSensorNeuronsEdit_.setSelectionMode(QAbstractItemView::MultiSelection);
     activeActionNeuronsEdit_.addItems({ "MFR", "Mrn", "MRL", "Mx", "My", "Kill" });
     activeActionNeuronsEdit_.setSelectionMode(QAbstractItemView::MultiSelection);
@@ -175,7 +197,7 @@ void DialogWindow::handleOkButtonClicked()
     {
         Config config(envSize, envType, numCreatures, maxInternalNeurons, std::move(activeSensorNeurons), std::move(activeActionNeurons), 
                       numGenes, numGenerations, numSteps, killZoneSize, mutRate);
-        emit dialogSelected(std::move(config));
+        emit dialogSelected(config);
         accept();
     }
 }
@@ -198,7 +220,7 @@ void MainWindow::openDialog()
     dialog.exec();
 }
 
-void MainWindow::createSimulation(Config&& config)
+void MainWindow::createSimulation(Config config)
 {
     gridWidget_ = std::make_unique<GridWidget>(std::move(config), this);
     setCentralWidget(gridWidget_.get());
