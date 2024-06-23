@@ -6,7 +6,7 @@ Environment::Environment(const Config* config)
 	config_(config),
 	numCreatures_(config_->numCreatures_)
 {
-	newGeneration(0.9);
+	newGeneration();
 }
 bool Environment::isFree(int x, int y)
 {

@@ -3,9 +3,9 @@
 double InternalNeuron::getActivation() const
 {
 	double activation = 0;
-	for (auto&& [i, j] : std::ranges::zip_view(sensorInputs_, sensorWeights_))
+	for (auto&& [input, weight] : std::ranges::zip_view(sensorInputs_, sensorWeights_))
 	{
-		activation += i->getActivation() * j;
+		activation += input->getActivation() * weight;
 	}
 	return activation;
 }
@@ -60,9 +60,9 @@ double DensNeuron::getActivation() const
 {
 	float activation = 0;
 	auto [x_pos, y_pos] = owner_->getPosition();
-	for (auto x : std::views::iota(std::max(0, (int)(x_pos - 2)), std::min((int)owner_->config_->envSize_, (int)(x_pos + 2))))
+	for (auto x : std::views::iota(std::max(0, (int)(x_pos - 2)), std::min((int)owner_->config_->envSize_, (int)(x_pos + 3))))
 	{
-		for (auto y : std::views::iota(std::max(0, (int)(y_pos - 2)), std::min((int)owner_->config_->envSize_, (int)(y_pos + 2))))
+		for (auto y : std::views::iota(std::max(0, (int)(y_pos - 2)), std::min((int)owner_->config_->envSize_, (int)(y_pos + 3))))
 		{
 			if (owner_->getEnv()->getHabitat()->at(x).at(y) != nullptr)
 			{

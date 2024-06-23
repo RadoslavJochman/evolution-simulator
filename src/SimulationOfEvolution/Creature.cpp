@@ -21,7 +21,7 @@ Creature::Creature(std::pair<int, int>&& pos, const Config* config, Environment*
 	myEnv_(myEnv),
 	genome_(std::move(genome)),
 	pos_(std::move(pos)),
-	direction_({ 1,0 })
+	direction_(generateRandomDirection())
 {}
 
 Creature::Creature()
@@ -48,7 +48,7 @@ void Creature::moveRight(const std::pair<int, int>& direction)
 	if (myEnv_->isFree(new_pos.first, new_pos.second))
 	{
 		myEnv_->moveCreature(pos_.first, pos_.second, new_pos.first, new_pos.second);
-		pos_ = new_pos;
+		pos_ = std::move(new_pos);
 	}
 }
 
@@ -59,7 +59,7 @@ void Creature::moveForward(const std::pair<int, int>& direction)
 	if (myEnv_->isFree(new_pos.first, new_pos.second))
 	{
 		myEnv_->moveCreature(pos_.first, pos_.second, new_pos.first, new_pos.second);
-		pos_ = new_pos;
+		pos_ = std::move(new_pos);
 	}
 }
 
@@ -70,7 +70,7 @@ void Creature::updatePosition(const std::pair<int, int>& direction)
 	if (myEnv_->isFree(new_pos.first, new_pos.second))
 	{
 		myEnv_->moveCreature(pos_.first, pos_.second, new_pos.first, new_pos.second);
-		pos_ = new_pos;
+		pos_ = std::move(new_pos);
 	}
 }
 
