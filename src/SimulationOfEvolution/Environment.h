@@ -20,7 +20,7 @@ public:
 	void moveCreature(std::size_t x, std::size_t y, std::size_t new_x, std::size_t new_y);
 	const std::vector<Creature>& getCreatures() const;
 	void step();
-	void newGeneration(double mutationRate);
+	void newGeneration();
 	void killCreatures();
 	const std::vector<std::vector<Creature*>>* getHabitat() const;
 private:

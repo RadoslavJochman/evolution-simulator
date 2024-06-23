@@ -14,6 +14,7 @@
 #include <QListWidget>
 #include <QComboBox>
 #include <QAnyStringView>
+#include <QMessageBox>
 #include <memory>
 #include "Environment.h"
 
@@ -49,7 +50,7 @@ public:
     explicit DialogWindow(QWidget* parent = nullptr);
 
 signals:
-    void dialogSelected(Config config);
+    void dialogSelected(Config&& config);
 
 private slots:
     void handleOkButtonClicked();
@@ -61,10 +62,11 @@ private:
     QComboBox envTypeBox_;
     QLineEdit killZoneSizeEdit_;
     QLineEdit numCreaturesEdit_;
+    QLineEdit numGenesEdit_;
     QLineEdit maxInternalNeuronsEdit_;
+    QLineEdit mutRateEdit_;
     QListWidget activeSensorNeuronsEdit_;
     QListWidget activeActionNeuronsEdit_;
-    QLineEdit numGenesEdit_;
     QLineEdit numGenerationsEdit_;
     QLineEdit numStepsEdit_;
     QPushButton okButton_;
@@ -78,7 +80,7 @@ public:
 
 private slots:
     void openDialog();
-    void createSimulation(Config config);
+    void createSimulation(Config&& config);
 
 private:
     std::unique_ptr<GridWidget> gridWidget_;

@@ -37,7 +37,7 @@ void Environment::step()
 }
 
 
-void Environment::newGeneration(double mutationRate)
+void Environment::newGeneration()
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -75,7 +75,7 @@ void Environment::newGeneration(double mutationRate)
 	std::uniform_real_distribution mutRate;
 	for (auto&& creature : creatures_)
 	{
-		if (mutRate(gen) > mutationRate)
+		if (mutRate(gen) > config_->mutRate_)
 		{
 			creature.mutate();
 		}

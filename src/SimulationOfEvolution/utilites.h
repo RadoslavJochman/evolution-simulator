@@ -90,7 +90,8 @@ struct Config
         std::size_t numGenes = 0,
         std::size_t numGenerations=0,
         std::size_t numSteps=0,
-        std::size_t killZoneSize=0)
+        std::size_t killZoneSize=0,
+        double mutRate=0)
         : 
         envSize_(envSize),
         envType_(std::move(envType)),
@@ -101,7 +102,8 @@ struct Config
         numGenes_(numGenes),
         numGenerations_(numGenerations),
         numSteps_(numSteps),
-        killZoneSize_(killZoneSize)
+        killZoneSize_(killZoneSize),
+        mutRate_(mutRate)
 
 	{}
     Config()
@@ -115,7 +117,8 @@ struct Config
         numGenes_(0),
         numGenerations_(0),
         numSteps_(0),
-        killZoneSize_(0)
+        killZoneSize_(0),
+        mutRate_(0)
 
     {}
 
@@ -129,6 +132,7 @@ struct Config
     std::size_t numGenerations_;
     std::size_t numSteps_;
     std::size_t killZoneSize_;
+    double mutRate_;
 };
 
 enum ConfigKey {
