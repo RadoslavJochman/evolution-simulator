@@ -9,24 +9,33 @@
 #include "Neurons.h"
 
 enum class ActionNeuronTypes { MFR, Mrn, MRL, Mx, My, Kill, UNKNOWN };
-enum class SensorNeuronTypes { Rnd, BDy, BDx, BD, Lx, Ly, UNKNOWN };
+enum class SensorNeuronTypes { Rnd, BDy, BDx, BD, Lx, Ly, Dens, UNKNOWN };
 
-
+/**
+ * @brief Checks if type T and U can be added together
+ */
 template<typename T, typename U>
 concept Addable = requires(T a, U b) {
     { a + b };
 };
 
+/**
+ * @brief Checks if type T and U can be multiplied togehter
+ */
 template<typename T, typename U>
 concept Multipliable = requires(T a, U b) {
     { a * b };
 };
 
+/**
+ * @brief Swaps first and second value in pair
+ */
 template<typename T, typename U>
 std::pair<U, T> swapPairValues(std::pair<T, U> p)
 {
     return std::make_pair(p.second, p.first);
 }
+
 
 template<typename T1, typename T2, typename U1, typename U2>
     requires Addable<T1, U1>&& Addable<T2, U2>
@@ -40,6 +49,9 @@ auto operator*(const std::pair<T1, T2>& p1, const std::pair<U1, U2>& p2) -> std:
     return std::make_pair(p1.first * p2.first, p1.second * p2.second);
 }
 
+/**
+ * @brief Generates random pair that contains exactly one 0 and one -1 or 1 respresenting one of the cardinal direction in 2D
+ */
 inline std::pair<int, int> generateRandomDirection() {
     std::random_device rd;
     std::mt19937 gen(rd()); 
@@ -54,7 +66,9 @@ inline std::pair<int, int> generateRandomDirection() {
 }
 
 
-
+/**
+ * @brief Converts hexadecimal number into decimal number
+ */
 inline std::string hexToBin(const std::string& hex) {
     static const std::unordered_map<char, std::string> hexToBinMap = {
         {'0', "0000"}, {'1', "0001"}, {'2', "0010"}, {'3', "0011"},
@@ -78,7 +92,9 @@ inline std::string hexToBin(const std::string& hex) {
 
     return bin;
 }
-
+/**
+ * @brief Holds all the configurable parameters
+ */
 struct Config
 {
     Config(std::size_t envSize,
@@ -135,41 +151,9 @@ struct Config
     double mutRate_;
 };
 
-enum ConfigKey {
-    ENV_SIZE,
-    ENV_TYPE,
-    NUM_CREATURES,
-    MAX_INTERNAL_NEURONS,
-    SENSOR_NEURONS_TYPE,
-    ACTION_NEURONS_TYPE,
-    NUM_GENES,
-    NUM_GENERATIONS,
-    NUM_STEPS,
-    UNKNOWN
-};
-
-inline ConfigKey getConfigKey(const std::string& key) {
-    static const std::unordered_map<std::string, ConfigKey> keyMap = {
-        {"env_size", ENV_SIZE},
-        {"env_type", ENV_TYPE},
-        {"num_creatures", NUM_CREATURES},
-        {"max_internal_neurons", MAX_INTERNAL_NEURONS},
-        {"sensor_neurons_type", SENSOR_NEURONS_TYPE},
-        {"action_neurons_type", ACTION_NEURONS_TYPE},
-        {"number_of_genes", NUM_GENES},
-        {"number_of_generations",NUM_GENERATIONS},
-        {"number_of_steps", NUM_STEPS}
-    };
-
-    auto it = keyMap.find(key);
-    if (it != keyMap.end()) {
-        return it->second;
-    }
-    else {
-        return UNKNOWN;
-    }
-}
-
+/**
+ * @brief Converts string name of action neuron into enum type
+ */
 inline ActionNeuronTypes getActionNeuron(const std::string& name)
 {
     static const std::unordered_map<std::string, ActionNeuronTypes> actionNeuronMap = {
@@ -190,14 +174,19 @@ inline ActionNeuronTypes getActionNeuron(const std::string& name)
     }
 }
 
+/**
+ * @brief Converts string name of sensor neuron into enum type
+ */
 inline SensorNeuronTypes getSensorNeuron(const std::string& name)
 {
     static const std::unordered_map<std::string, SensorNeuronTypes> sensorNeuronMap = {
     {"Rnd", SensorNeuronTypes::Rnd},
     {"BDy", SensorNeuronTypes::BDy},
+    {"BDx", SensorNeuronTypes::BDx},
     {"BD", SensorNeuronTypes::BD},
     {"Lx", SensorNeuronTypes::Lx},
-    {"Ly", SensorNeuronTypes::Ly}
+    {"Ly", SensorNeuronTypes::Ly},
+    {"Dens", SensorNeuronTypes::Ly}
     };
 
     auto it = sensorNeuronMap.find(name);
@@ -209,76 +198,4 @@ inline SensorNeuronTypes getSensorNeuron(const std::string& name)
     }
 }
 
-/*inline Config readConfig(const std::string& filename) {
-    std::ifstream file(filename);
-    if (!file.is_open()) {
-        throw std::runtime_error("Unable to open file");
-    }
-
-    std::size_t envSize = 0;
-    std::string envType;
-    std::size_t numCreatures = 0;
-    std::size_t maxInternalNeurons = 0;
-    std::size_t numGenes = 0;
-    std::vector<SensorNeuronTypes> sensorNeuronsType;
-    std::vector<ActionNeuronTypes> actionNeuronsType;
-    std::size_t numGenerations;
-    std::size_t numSteps;
-
-    std::string line;
-    while (std::getline(file, line)) {
-        std::istringstream iss(line);
-        std::string key;
-        if (std::getline(iss, key, '=')) {
-            std::string value;
-            if (std::getline(iss, value)) {
-                switch (getConfigKey(key)) {
-                case ENV_SIZE:
-                    envSize = std::stoul(value);
-                    break;
-                case ENV_TYPE:
-                    envType = value;
-                    break;
-                case NUM_CREATURES:
-                    numCreatures = std::stoul(value);
-                    break;
-                case MAX_INTERNAL_NEURONS:
-                    maxInternalNeurons = std::stoul(value);
-                    break;
-                case NUM_GENES:
-                    numGenes = std::stoul(value);
-                case NUM_GENERATIONS:
-                    numGenerations = std::stoul(value);
-                case NUM_STEPS:
-                    numSteps = std::stoul(value);
-                case SENSOR_NEURONS_TYPE: {
-                    std::istringstream ss(value);
-                    std::string neuron;
-                    while (ss >> neuron) {
-                        ActionNeuronTypes type = getActionNeuron(neuron);
-                        if (type != ActionNeuronTypes::UNKNOWN)  actionNeuronsType.push_back(type);
-                        else {}// Handle unknown neuron if necessary
-                    }
-                    break;
-                }
-                case ACTION_NEURONS_TYPE: {
-                    std::istringstream ss(value);
-                    std::string neuron;
-                    while (ss >> neuron) {
-                        SensorNeuronTypes type = getSensorNeuron(neuron);
-                        if (type != SensorNeuronTypes::UNKNOWN)  sensorNeuronsType.push_back(type);
-                        else {}// Handle unknown neuron if necessary
-                    }
-                    break;
-                }
-                case UNKNOWN:
-                    // Handle unknown keys if necessary
-                    break;
-                }
-            }
-        }
-    }
-
-    return Config(envSize, envType, numCreatures, maxInternalNeurons, sensorNeuronsType, actionNeuronsType, numGenes, numGenerations, numSteps);
-}*/
 #endif
