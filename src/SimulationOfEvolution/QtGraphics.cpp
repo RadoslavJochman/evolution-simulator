@@ -12,16 +12,17 @@ void delay(int millisecondsToWait)
     }
 }
 
-GridWidget::GridWidget(Config&& config, QWidget* parent)
+GridWidget::GridWidget(Config&& config, std::size_t fps, QWidget* parent)
     : 
     QWidget(parent),
     config_(std::move(config)),
     myEnv_(&config_),
     timer_(this),
     frameCount_(0),
-    genCount_(0)
+    genCount_(0),
+    fps_(fps)
 {
-    setFixedSize(800, 800);
+    setFixedSize(1000, 1000);
     generateColors();
     generateCircles();
     connect(&timer_, &QTimer::timeout, this, &GridWidget::updateFrame);
@@ -35,16 +36,9 @@ GridWidget::GridWidget()
     myEnv_(&config_),
     timer_(this),
     frameCount_(0),
-    genCount_(0)
-{
-}
-
-void GridWidget::startAnimation() {
-    circleColors_.clear();
-    frameCount_ = 0;
-    generateColors();
-    timer_.start(1000 / 10);
-}
+    genCount_(0),
+    fps_(0)
+{}
 
 void GridWidget::updateFrame() 
 {
@@ -93,8 +87,8 @@ void GridWidget::paintEvent(QPaintEvent* event)
 void GridWidget::generateCircles() 
 {
     circles_.clear();
-    std::size_t cellWidth = width() / (config_.envSize_);
-    std::size_t cellHeight = height() / (config_.envSize_);
+    std::size_t cellWidth = width() / (config_.envSize_+1);
+    std::size_t cellHeight = height() / (config_.envSize_+1);
     std::size_t counter = 0;
     for (auto&& creature : myEnv_.getCreatures()) 
     {
@@ -104,8 +98,8 @@ void GridWidget::generateCircles()
         }
 
         const std::pair<std::size_t, std::size_t>& pos = creature.getPosition();
-        std::size_t x = (pos.first + 1) * cellWidth;
-        std::size_t y = (pos.second + 1) * cellHeight;
+        std::size_t x = (pos.first+1) * cellWidth;
+        std::size_t y = (pos.second+1) * cellHeight;
         std::string hexColor;
         circles_.append(QRect(x, y, cellWidth, cellHeight));
         counter++;
@@ -157,6 +151,7 @@ DialogWindow::DialogWindow(QWidget* parent)
     formLayout_.addRow("Active action neurons:", &activeActionNeuronsEdit_);
     formLayout_.addRow("Number of generations:", &numGenerationsEdit_);
     formLayout_.addRow("Number of steps per generation:", &numStepsEdit_);
+    formLayout_.addRow("Number of FPS:", &fpsEdit_);
     connect(&okButton_, &QPushButton::clicked, this, &DialogWindow::handleOkButtonClicked);
     formLayout_.addRow(&okButton_);
 
@@ -167,7 +162,7 @@ DialogWindow::DialogWindow(QWidget* parent)
 
 void DialogWindow::handleOkButtonClicked() 
 {
-    bool sizeOk, killZoneSizeOk, numCreaturesOk, maxInternalNeuronsOk, numGenesOk, numGenerationsOk, numStepsOk, mutRateOk;
+    bool sizeOk, killZoneSizeOk, numCreaturesOk, maxInternalNeuronsOk, numGenesOk, numGenerationsOk, numStepsOk, mutRateOk, fpsOk;
     std::size_t envSize = envSizeEdit_.text().toInt(&sizeOk);
     std::string envType = envTypeBox_.currentText().toStdString();
     std::size_t killZoneSize = killZoneSizeEdit_.text().toInt(&killZoneSizeOk);
@@ -193,12 +188,18 @@ void DialogWindow::handleOkButtonClicked()
     }
     std::size_t numGenerations = numGenerationsEdit_.text().toInt(&numGenerationsOk);
     std::size_t numSteps = numStepsEdit_.text().toInt(&numStepsOk);
-    if (sizeOk && numCreaturesOk && maxInternalNeuronsOk && numGenesOk && numGenerationsOk && numStepsOk && killZoneSizeOk)
+    std::size_t fps = fpsEdit_.text().toInt(&fpsOk);
+    if (sizeOk && numCreaturesOk && maxInternalNeuronsOk && numGenesOk && numGenerationsOk && numStepsOk && killZoneSizeOk && mutRateOk && fpsOk)
     {
         Config config(envSize, envType, numCreatures, maxInternalNeurons, std::move(activeSensorNeurons), std::move(activeActionNeurons), 
                       numGenes, numGenerations, numSteps, killZoneSize, mutRate);
-        emit dialogSelected(config);
+        emit dialogSelected(config, fps);
         accept();
+    }
+    else
+    {
+        QMessageBox::warning(this, "Selection Error", "Please fill all fields.");
+        return;
     }
 }
 
@@ -206,10 +207,17 @@ MainWindow::MainWindow(QWidget* parent)
     : 
     QMainWindow(parent),
     configSimAction_("Configure new simulation", this),
+    stopSimAction_("Stop", this),
+    startSimAction_("Start", this),
     gridWidget_(nullptr)
 {
+    setFixedSize(1000, 1000);
     connect(&configSimAction_, &QAction::triggered, this, &MainWindow::openDialog);
+    connect(&stopSimAction_, &QAction::triggered, this, &MainWindow::stopSimulation);
+    connect(&startSimAction_, &QAction::triggered, this, &MainWindow::startSimulation);
     menuBar()->addAction(&configSimAction_);
+    menuBar()->addAction(&stopSimAction_);
+    menuBar()->addAction(&startSimAction_);
     setWindowTitle("Simulation of evolution");
 }
 
@@ -220,9 +228,33 @@ void MainWindow::openDialog()
     dialog.exec();
 }
 
-void MainWindow::createSimulation(Config config)
+void MainWindow::createSimulation(Config config, std::size_t fps)
 {
-    gridWidget_ = std::make_unique<GridWidget>(std::move(config), this);
+    gridWidget_ = std::make_unique<GridWidget>(std::move(config), fps, this);
     setCentralWidget(gridWidget_.get());
-    gridWidget_->startAnimation();
+}
+
+void MainWindow::stopSimulation()
+{
+    if (gridWidget_.get() != nullptr)
+    {
+        gridWidget_->stopTimer();
+    }
+    else
+    {
+        QMessageBox::warning(this, "No simulation configured", "Please configure simulation first.");
+    }
+}
+
+void MainWindow::startSimulation()
+{
+    if (gridWidget_.get() != nullptr)
+    {
+        gridWidget_->startTimer();
+    }
+    else
+    {
+        QMessageBox::warning(this, "No simulation configured", "Please configure simulation first.");
+    }
+    
 }

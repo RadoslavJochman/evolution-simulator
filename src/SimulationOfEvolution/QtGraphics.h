@@ -23,12 +23,20 @@ class GridWidget : public QWidget
 {
     Q_OBJECT
 public:
-    GridWidget(Config&& config, QWidget* parent = nullptr);
+    GridWidget(Config&& config, std::size_t fps, QWidget* parent = nullptr);
     GridWidget();
     /**
      * @brief Starts the animation
      */
-    void startAnimation();
+    void startTimer() 
+    { 
+        generateColors();
+        timer_.start(1000 / fps_);
+    }
+    /**
+    * @brief Stops the animation
+    */
+    void stopTimer() { timer_.stop(); }
 protected:
     /**
      * @brief draws the frame
@@ -43,6 +51,7 @@ private:
     QTimer timer_;
     int frameCount_;
     int genCount_;
+    std::size_t fps_;
     /**
      * @brief Generates circles at creature`s current positions
      */
@@ -66,7 +75,7 @@ public:
     explicit DialogWindow(QWidget* parent = nullptr);
 
 signals:
-    void dialogSelected(Config config);
+    void dialogSelected(Config config, std::size_t fps);
 
 private slots:
     /**
@@ -88,6 +97,7 @@ private:
     QListWidget activeActionNeuronsEdit_;
     QLineEdit numGenerationsEdit_;
     QLineEdit numStepsEdit_;
+    QLineEdit fpsEdit_;
     QPushButton okButton_;
 };
 
@@ -105,11 +115,21 @@ private slots:
     /**
      * @brief Creates window where the simulation runs
      */
-    void createSimulation(Config config);
+    void createSimulation(Config config, std::size_t fps);
+    /**
+    * @brief Stops the simulation
+    */
+    void stopSimulation();
+    /**
+    * @brief Stops the simulation
+    */
+    void startSimulation();
 
 private:
     std::unique_ptr<GridWidget> gridWidget_;
     QAction configSimAction_;
+    QAction stopSimAction_;
+    QAction startSimAction_;
 };
 
 #endif
