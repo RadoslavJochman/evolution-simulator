@@ -41,6 +41,7 @@ public:
 	Creature breed(const Creature& c1, std::pair<int, int>&& pos);
 	void mutate();
 	const Environment* getEnv() const;
+	const std::pair<int, int> getDrirection() const;
 private:
 	bool killed;
 	Environment* myEnv_;

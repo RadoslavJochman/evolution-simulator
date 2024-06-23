@@ -108,7 +108,12 @@ void KillNeuron::step()
 {
 	if (std::fabs(getActivation()) >= activationThreshold_)
 	{
-
+		auto habitat = owner_->getEnv()->getHabitat();
+		auto [x, y] = owner_->getPosition()+owner_->getDrirection();
+		if (x < owner_->config_->envSize_ && x >= 0 && y < owner_->config_->envSize_ && y >= 0 && habitat->at(x).at(y) != nullptr)
+		{
+			habitat->at(x).at(y)->die();
+		}
 	}
 }
 

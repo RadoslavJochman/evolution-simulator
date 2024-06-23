@@ -239,6 +239,10 @@ const Environment* Creature::getEnv() const
 	return myEnv_;
 }
 
+const std::pair<int, int> Creature::getDrirection() const
+{
+	return direction_;
+}
 void Creature::addSensorNeuron(SensorNeuronTypes type)
 {
 	switch (type)
