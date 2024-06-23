@@ -16,7 +16,7 @@ This project simulates a dynamic environment with evolving creatures. The simula
 ## Installation
 
 To install and run this project, follow these steps:
-
+### Linux
 1. **Build the project using CMake**:
     ```bash
     mkdir build
@@ -24,8 +24,9 @@ To install and run this project, follow these steps:
     cmake ..
     make
     ```
-
     The CMake configuration will automatically download and build all required dependencies.
+    ### Windows
+    Program can be build in VisualStudio as Cmake project. 
 
 ## Usage
 
