@@ -17,7 +17,7 @@ endif()
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 qt_standard_project_setup()
 
-qt_add_executable(${PROJECT_NAME} "Main.cpp" "Neurons.h" "Neurons.cpp" "utilites.h" "Creature.h" "Creature.cpp" "Environment.h" "Environment.cpp" "QtGraphics.cpp" "QtGraphics.h") 
+qt_add_executable(${PROJECT_NAME} "Main.cpp" "Neurons.h" "Neurons.cpp" "utilities.h" "Creature.h" "Creature.cpp" "Environment.h" "Environment.cpp" "QtGraphics.cpp" "QtGraphics.h") 
 target_link_libraries(${PROJECT_NAME} PUBLIC Qt6::Core Qt6::Gui Qt6::Widgets)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
