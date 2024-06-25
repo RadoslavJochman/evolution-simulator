@@ -12,7 +12,7 @@ The simulation will focus on key aspects of evolution, including reproduction, m
 
 ### 2.1 Software Requirements
 - Operating System: Windows 10, macOS, or Linux
-- Programming Language: C++ (C++11 or later)
+- Programming Language: C++ (C++20 or later)
 - External Libraries: Qt, Matplot++
 
 ## 3. Functional Requirements
