@@ -31,7 +31,7 @@ concept Multipliable = requires(T a, U b) {
  * @brief Swaps first and second value in pair
  */
 template<typename T, typename U>
-std::pair<U, T> swapPairValues(std::pair<T, U> p)
+std::pair<U, T> swapPairValues(const std::pair<T, U>& p)
 {
     return std::make_pair(p.second, p.first);
 }
