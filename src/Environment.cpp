@@ -165,7 +165,7 @@ void Environment::killDense(std::size_t size)
 			{
 				for (auto y : std::views::iota(std::max(0, (int)(y_pos - size)), std::min((int)config_->envSize_, (int)(y_pos + size + 1))))
 				{
-					if (habitat_[x][y] != nullptr)
+					if (habitat_[x][y] != nullptr && (x!=x_pos || y!=y_pos))
 					{
 						creature.die();
 						habitat_[x][y]->die();
