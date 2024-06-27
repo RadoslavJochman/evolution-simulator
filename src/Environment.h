@@ -15,7 +15,7 @@ class Environment
 {
 
 public:
-	Environment(const Config* config);
+	Environment(const Config& config);
 	/**
 	* @brief Returns true if there is no creature at [x,y] or if the creature is dead
 	*/
@@ -43,7 +43,7 @@ public:
 	/**
 	 * @brief Returns pointer to habitat
 	 */
-	const std::vector<std::vector<Creature*>>* getHabitat() const;
+	const std::vector<std::vector<Creature*>>& getHabitat() const;
 private:
 	/**
 	 * @brief Kills all creatures that are in square area in the center of the habitat
@@ -61,7 +61,7 @@ private:
 	 * @brief Kills all creatures that are surrounded by other creature
 	 */
 	void killDense(std::size_t size);
-	const Config* config_;
+	const Config& config_;
 	std::size_t numCreatures_;
 	std::vector<Creature> creatures_;
 	std::vector<std::vector<Creature*>> habitat_;
