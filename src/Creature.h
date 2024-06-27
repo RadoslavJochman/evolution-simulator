@@ -21,9 +21,8 @@ class Environment;
 class Creature
 {
 public:
-	Creature(std::pair<int, int>&& pos, const Config* config, Environment* myEnv);
-	Creature(std::pair<int, int>&& pos, const Config* config, Environment* myEnv, std::vector<std::string>&& genome);
-	Creature();
+	Creature(std::pair<int, int>&& pos, const Config& config, Environment& myEnv);
+	Creature(std::pair<int, int>&& pos, const Config& config, Environment& myEnv, std::vector<std::string>&& genome);
 	/**
 	 * @brief Evaluates all neurons of the creature and performs actions
 	 */
@@ -71,7 +70,7 @@ public:
 	/**
 	 * @brief Returns pointer to creature`s environment
 	 */
-	const Environment* getEnv() const;
+	const Environment& getEnv() const;
 	/**
 	* @brief Returns creature`s direction
 	*/
@@ -80,7 +79,7 @@ public:
 	Creature& operator=(const Creature&) = delete;
 	Creature(Creature&&) noexcept = default;
 	Creature& operator=(Creature&&) noexcept = default;
-	const Config* config_;
+	const Config& config_;
 private:
 	/**
 	 * @brief Creates random genome, each gene is represented by hexadecimal number with 8 digits
@@ -99,7 +98,7 @@ private:
 	 */
 	void createConnection(char sourceType, char endType, int sourceID, int endID, int weight);
 	bool killed;
-	Environment* myEnv_;
+	Environment& myEnv_;
 	std::vector<std::string> genome_;
 	std::unordered_map<SensorNeuronTypes, std::unique_ptr<SensorNeuron>> sensorBrain_;
 	std::unordered_map<std::size_t, InternalNeuron> internalBrain_;
