@@ -25,42 +25,72 @@ double RndNeuron::getActivation() const
 	return dis(gen);
 }
 
+BDyNeuron::BDyNeuron(const Creature & owner)
+	:
+	owner_(owner)
+{}
+
 double BDyNeuron::getActivation() const
 {
-	return -1 + owner_->getPosition().second * (2.0f / owner_->config_->envSize_);
+	return -1 + owner_.getPosition().second * (2.0f / owner_.config_->envSize_);
 }
+
+BDxNeuron::BDxNeuron(const Creature& owner)
+	:
+	owner_(owner)
+{}
 
 double BDxNeuron::getActivation() const
 {
-	return -1 + owner_->getPosition().first * (2.0f / owner_->config_->envSize_);
+	return -1 + owner_.getPosition().first * (2.0f / owner_.config_->envSize_);
 }
+
+BDNeuron::BDNeuron(const Creature& owner)
+	:
+	owner_(owner)
+{}
 
 double BDNeuron::getActivation() const
 {
-	return std::min(std::fabs(-1 + owner_->getPosition().first * (2.0f / owner_->config_->envSize_)),
-					std::fabs(-1 + owner_->getPosition().second * (2.0f / owner_->config_->envSize_)));
+	return std::min(std::fabs(-1 + owner_.getPosition().first * (2.0f / owner_.config_->envSize_)),
+					std::fabs(-1 + owner_.getPosition().second * (2.0f / owner_.config_->envSize_)));
 }
+
+LxNeuron::LxNeuron(const Creature& owner)
+	:
+	owner_(owner)
+{}
 
 double LxNeuron::getActivation() const
 {
-	return owner_->getPosition().first * (1.0f / owner_->config_->envSize_);
+	return owner_.getPosition().first * (1.0f / owner_.config_->envSize_);
 }
+
+LyNeuron::LyNeuron(const Creature& owner)
+	:
+	owner_(owner)
+{}
 
 double LyNeuron::getActivation() const
 {
-	return owner_->getPosition().second * (1.0f / owner_->config_->envSize_);
+	return owner_.getPosition().second * (1.0f / owner_.config_->envSize_);
 }
 
+
+DensNeuron::DensNeuron(const Creature& owner)
+	:
+	owner_(owner)
+{}
 
 double DensNeuron::getActivation() const
 {
 	float activation = 0;
-	auto [x_pos, y_pos] = owner_->getPosition();
-	for (auto x : std::views::iota(std::max(0, (int)(x_pos - 2)), std::min((int)owner_->config_->envSize_, (int)(x_pos + 3))))
+	auto [x_pos, y_pos] = owner_.getPosition();
+	for (auto x : std::views::iota(std::max(0, (int)(x_pos - 2)), std::min((int)owner_.config_->envSize_, (int)(x_pos + 3))))
 	{
-		for (auto y : std::views::iota(std::max(0, (int)(y_pos - 2)), std::min((int)owner_->config_->envSize_, (int)(y_pos + 3))))
+		for (auto y : std::views::iota(std::max(0, (int)(y_pos - 2)), std::min((int)owner_.config_->envSize_, (int)(y_pos + 3))))
 		{
-			if (owner_->getEnv()->getHabitat()->at(x).at(y) != nullptr)
+			if (owner_.getEnv()->getHabitat()->at(x).at(y) != nullptr)
 			{
 				activation += 1;
 			}
@@ -73,6 +103,11 @@ double DensNeuron::getActivation() const
 	return activation / 25;
 }
 
+ActionNeuron::ActionNeuron(Creature& owner, int activationTreshold)
+	:
+	owner_(owner),
+	activationThreshold_(activationTreshold)
+{}
 
 double ActionNeuron::getActivation()const
 {
@@ -103,18 +138,24 @@ void ActionNeuron::createConnection(int weight, SensorNeuron* source)
 }
 
 
+KillNeuron::KillNeuron(Creature& owner, int activationTreshold)
+	: ActionNeuron(owner, activationTreshold) {}
+
 void KillNeuron::step()
 {
 	if (std::fabs(getActivation()) >= activationThreshold_)
 	{
-		auto habitat = owner_->getEnv()->getHabitat();
-		auto [x, y] = owner_->getPosition()+owner_->getDirection();
-		if (x < owner_->config_->envSize_ && x >= 0 && y < owner_->config_->envSize_ && y >= 0 && habitat->at(x).at(y) != nullptr)
+		auto habitat = owner_.getEnv()->getHabitat();
+		auto [x, y] = owner_.getPosition()+owner_.getDirection();
+		if (x < owner_.config_->envSize_ && x >= 0 && y < owner_.config_->envSize_ && y >= 0 && habitat->at(x).at(y) != nullptr)
 		{
 			habitat->at(x).at(y)->die();
 		}
 	}
 }
+
+MyNeuron::MyNeuron(Creature& owner, int activationTreshold)
+	: ActionNeuron(owner, activationTreshold) {}
 
 void MyNeuron::step()
 {
@@ -123,15 +164,18 @@ void MyNeuron::step()
 	{
 		if (activation > 0)
 		{
-			owner_->updatePosition({ 0, 1 });
+			owner_.updatePosition({ 0, 1 });
 		}
 		else
 		{
-			owner_->updatePosition({ 0, -1 });
+			owner_.updatePosition({ 0, -1 });
 		}
 		
 	}
 }
+
+MxNeuron::MxNeuron(Creature& owner, int activationTreshold)
+	: ActionNeuron(owner, activationTreshold) {}
 
 void MxNeuron::step()
 {
@@ -140,15 +184,18 @@ void MxNeuron::step()
 	{
 		if (activation > 0)
 		{
-			owner_->updatePosition({ 1, 0 });
+			owner_.updatePosition({ 1, 0 });
 		}
 		else
 		{
-			owner_->updatePosition({ -1, 0 });
+			owner_.updatePosition({ -1, 0 });
 		}
 
 	}
 }
+
+MRLNeuron::MRLNeuron(Creature& owner, int activationTreshold)
+	: ActionNeuron(owner, activationTreshold) {}
 
 void MRLNeuron::step()
 {
@@ -157,22 +204,28 @@ void MRLNeuron::step()
 	{
 		if (activation > 0)
 		{
-			owner_->moveRight({ 1, -1 });
+			owner_.moveRight({ 1, -1 });
 		}
 		else
 		{
-			owner_->moveRight({ -1, 1 });
+			owner_.moveRight({ -1, 1 });
 		}
 	}
 }
+
+MrnNeuron::MrnNeuron(Creature& owner, int activationTreshold)
+	: ActionNeuron(owner, activationTreshold) {}
 
 void MrnNeuron::step()
 {
 	if (std::fabs(getActivation()) >= activationThreshold_)
 	{
-		owner_->updatePosition(generateRandomDirection());
+		owner_.updatePosition(generateRandomDirection());
 	}
 }
+
+MFRNeuron::MFRNeuron(Creature& owner, int activationTreshold)
+	: ActionNeuron(owner, activationTreshold) {}
 
 void MFRNeuron::step()
 {
@@ -181,11 +234,11 @@ void MFRNeuron::step()
 	{
 		if (activation > 0)
 		{
-			owner_->moveForward({ 1,1 });
+			owner_.moveForward({ 1,1 });
 		}
 		else
 		{
-			owner_->moveForward({ -1,-1 });
+			owner_.moveForward({ -1,-1 });
 		}
 
 	}
