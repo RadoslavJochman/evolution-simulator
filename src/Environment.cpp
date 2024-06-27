@@ -76,7 +76,7 @@ void Environment::newGeneration()
 		for (int i : positions | std::views::take(config_.numCreatures_))
 		{
 			auto pos = std::div(i, config_.envSize_);
-			creatures_.emplace_back(std::make_pair(pos.rem,pos.quot), config_, this);
+			creatures_.emplace_back(std::make_pair(pos.rem,pos.quot), &config_, this);
 		}
 	}
 	std::uniform_real_distribution mutRate;

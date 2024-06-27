@@ -90,7 +90,7 @@ double DensNeuron::getActivation() const
 	{
 		for (auto y : std::views::iota(std::max(0, (int)(y_pos - 2)), std::min((int)owner_.config_->envSize_, (int)(y_pos + 3))))
 		{
-			if (owner_.getEnv()->getHabitat()->at(x).at(y) != nullptr)
+			if (owner_.getEnv()->getHabitat().at(x).at(y) != nullptr)
 			{
 				activation += 1;
 			}
@@ -147,9 +147,9 @@ void KillNeuron::step()
 	{
 		auto habitat = owner_.getEnv()->getHabitat();
 		auto [x, y] = owner_.getPosition()+owner_.getDirection();
-		if (x < owner_.config_->envSize_ && x >= 0 && y < owner_.config_->envSize_ && y >= 0 && habitat->at(x).at(y) != nullptr)
+		if (x < owner_.config_->envSize_ && x >= 0 && y < owner_.config_->envSize_ && y >= 0 && habitat.at(x).at(y) != nullptr)
 		{
-			habitat->at(x).at(y)->die();
+			habitat.at(x).at(y)->die();
 		}
 	}
 }

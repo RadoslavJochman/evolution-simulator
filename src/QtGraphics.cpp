@@ -16,7 +16,7 @@ GridWidget::GridWidget(Config&& config, std::size_t fps, QWidget* parent)
     : 
     QWidget(parent),
     config_(std::move(config)),
-    myEnv_(&config_),
+    myEnv_(config_),
     timer_(this),
     frameCount_(0),
     genCount_(0),
@@ -33,7 +33,7 @@ GridWidget::GridWidget()
     :
     QWidget(nullptr),
     config_(),
-    myEnv_(&config_),
+    myEnv_(config_),
     timer_(this),
     frameCount_(0),
     genCount_(0),
