@@ -4,7 +4,7 @@
 ## Overview
 
 This project simulates a dynamic environment with evolving creatures. The simulation includes various neural types, allowing creatures to perceive their environment and take actions based on their neural activations. The creatures evolve over generations, adapting to their environment through mutation and breeding.
-
+Higher level overview can be found [here](Overview.md)
 ## Features
 
 - **Dynamic Environment**: The environment contains a grid where creatures interact, move, and evolve.
