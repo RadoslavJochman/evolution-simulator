@@ -16,7 +16,6 @@ bool Environment::isFree(int x, int y)
 		return habitat_[x][y] == nullptr || habitat_[x][y]->isKilled();
 	}
 	else return false;
-	
 }
 
 void Environment::moveCreature(std::size_t x, std::size_t y, std::size_t new_x, std::size_t new_y)
@@ -87,7 +86,7 @@ void Environment::newGeneration()
 			creature.mutate();
 		}
 		auto [x, y] = creature.getPosition();
-		habitat_[x][y] = &(creature);
+		habitat_[x][y] = &creature;
 		creature.buildBrain();
 	}
 }
