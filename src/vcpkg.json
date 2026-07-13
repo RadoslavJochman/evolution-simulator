@@ -1,9 +1,8 @@
 {
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
-  "name": "wic2",
+  "name": "evolution-simulator",
+  "version": "0.1.0",
   "dependencies": [
-    {
-      "name": "qtbase"
-    }
+    { "name": "qtbase" }
   ]
 }
