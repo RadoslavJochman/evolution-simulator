@@ -8,14 +8,12 @@ environment — and you can watch it happen in real time through a Qt interface.
 Inspired by the "evolving creatures with tiny brains" family of simulations (e.g. biosim4),
 implemented from scratch in modern C++.
 
-![Simulation screenshot](assets/demo.gif)
+![Simulation demo](assets/demo.gif)
 
-<!-- Optional badges — uncomment once the repo is public
-![C++](https://img.shields.io/badge/C%2B%2B-23-blue)
-![Build](https://img.shields.io/badge/build-CMake%20%2B%20vcpkg-green)
+![C++](https://img.shields.io/badge/C%2B%2B-20-blue)
+![Build](https://img.shields.io/badge/build-CMake-green)
 ![Qt](https://img.shields.io/badge/GUI-Qt6-41cd52)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
--->
 
 ---
 
@@ -70,30 +68,32 @@ type, kill-zone size, number of creatures, genes per genome, maximum internal ne
 rate, the active sensor/action neuron sets, and the number of generations and steps per
 generation.
 
+## Requirements
+
+- A C++20 compiler (GCC 11+, Clang, or MSVC)
+- [CMake](https://cmake.org/) ≥ 3.16
+- Qt 6 — either from your system package manager, or fetched via [vcpkg](https://vcpkg.io/)
+
 ## Building
 
-Requires a C++23 compiler, [CMake](https://cmake.org/) ≥ 3.22, and
-[vcpkg](https://vcpkg.io/) (used to fetch Qt 6).
-
-**Point CMake at vcpkg** by either setting the `VCPKG_ROOT` environment variable or adding vcpkg
-as a submodule at the repo root (`git submodule add https://github.com/microsoft/vcpkg`). The
-build picks up whichever it finds.
-
-### Linux / macOS
+### System Qt (simplest on Linux)
 
 ```bash
-cmake -S src -B build
+sudo apt install qt6-base-dev cmake build-essential ninja-build   # Debian/Ubuntu
+cmake -S src -B build -G Ninja
 cmake --build build
 ./build/SimulationOfEvolution
 ```
 
-vcpkg resolves and builds the Qt dependency automatically on the first configure (this can take
-a while the first time).
+### vcpkg (fetches Qt automatically)
+
+Set the `VCPKG_ROOT` environment variable, or add vcpkg as a submodule at the repo root
+(`git submodule add https://github.com/microsoft/vcpkg`), then configure as above. vcpkg builds
+Qt from source on the first configure, which can take 10–20 minutes.
 
 ### Windows
 
-Open the folder in Visual Studio as a CMake project, or use the `CMakePresets.json` — Qt is
-supplied through vcpkg the same way.
+Open the folder in Visual Studio as a CMake project — system Qt or vcpkg both work.
 
 ## Project structure
 
@@ -107,7 +107,7 @@ supplied through vcpkg the same way.
 │   ├── QtGraphics.{h,cpp}   # GUI and rendering
 │   └── utilities.h
 ├── docs/           # design overview and specification
-├── assets/         # screenshot / GIF
+├── assets/         # demo GIF
 ├── README.md
 └── LICENSE
 ```
