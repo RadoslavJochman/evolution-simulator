@@ -8,7 +8,7 @@ environment — and you can watch it happen in real time through a Qt interface.
 Inspired by the "evolving creatures with tiny brains" family of simulations (e.g. biosim4),
 implemented from scratch in modern C++.
 
-![Simulation screenshot](assets/screenshot.png)
+![Simulation screenshot](assets/demo.gif)
 
 > _Replace the image above with a screenshot or, better, a short GIF of the simulation running.
 > A visual project is sold by one good animation more than by any paragraph._
