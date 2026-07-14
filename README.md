@@ -10,9 +10,6 @@ implemented from scratch in modern C++.
 
 ![Simulation screenshot](assets/demo.gif)
 
-> _Replace the image above with a screenshot or, better, a short GIF of the simulation running.
-> A visual project is sold by one good animation more than by any paragraph._
-
 <!-- Optional badges — uncomment once the repo is public
 ![C++](https://img.shields.io/badge/C%2B%2B-23-blue)
 ![Build](https://img.shields.io/badge/build-CMake%20%2B%20vcpkg-green)
